@@ -1,0 +1,66 @@
+<%# ----------------------------------------------------------------------
+    Ad slot renderer. Templates only describe markup; selection, targeting and
+    measurement live in services/ads.js. Every slot is labelled "বিজ্ঞাপন" so
+    readers can always tell journalism from advertising.
+   ---------------------------------------------------------------------- %>
+<%
+  const data = slot(slotId);
+  const ad = data.ad;
+  const meta = data.meta;
+  const variant = typeof variantClass !== 'undefined' ? variantClass : '';
+  const isSidebar = slotId.indexOf('sidebar') === 0;
+  const isMobileSticky = slotId === 'mobile-banner';
+  const showForDevice = !meta || meta.group === 'all'
+    || (meta.group === 'mobile' && (data.device === 'mobile' || data.device === 'tablet'))
+    || (meta.group === 'desktop' && data.device === 'desktop');
+%>
+<% if (adsEnabled && showForDevice) { %>
+  <div class="ad <%= isSidebar ? 'ad--sidebar' : '' %> <%= isMobileSticky ? 'ad--sticky-mobile' : '' %> <%= variant %>"
+       data-ad-slot="<%= slotId %>"
+       data-ad-id="<%= ad ? ad.id : '' %>"
+       <% if (typeof article !== 'undefined' && article) { %>data-article="<%= article.id %>"<% } %>>
+    <div class="ad__label"><%= locale === 'en' ? 'Advertisement' : 'বিজ্ঞাপন' %></div>
+
+    <% if (ad && ad.kind === 'image' && ad.image_url) { %>
+      <a class="ad__creative" href="<%= ad.link_url || '#' %>" target="_blank" rel="nofollow noopener sponsored"
+         data-ad-click data-ad-id="<%= ad.id %>" data-ad-slot="<%= slotId %>">
+        <img src="<%= h.safeUrl(ad.image_url) %>" alt="<%= ad.headline || 'Advertisement' %>" loading="lazy" decoding="async" width="970" height="90">
+      </a>
+
+    <% } else if (ad && (ad.kind === 'html' || ad.kind === 'script')) { %>
+      <%# Sandboxed: no allow-same-origin, so this frame cannot read our cookies or DOM. %>
+      <iframe src="/ads/frame/<%= ad.id %>" title="<%= ad.name %>" loading="lazy"
+              sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
+              referrerpolicy="no-referrer" scrolling="no"></iframe>
+
+    <% } else if (ad && ad.kind === 'video' && ad.video_url) { %>
+      <iframe data-src="<%= h.embedUrl(ad.video_url) %>" title="<%= ad.name %>" loading="lazy" allowfullscreen></iframe>
+
+    <% } else if (ad && ad.kind === 'text') { %>
+      <a class="ad__house" href="<%= ad.link_url || '#' %>" rel="nofollow noopener sponsored"
+         data-ad-click data-ad-id="<%= ad.id %>" data-ad-slot="<%= slotId %>">
+        <div>
+          <h4><%= ad.headline || ad.name %></h4>
+          <p><%= ad.body %></p>
+        </div>
+        <% if (ad.cta) { %><span class="cta"><%= ad.cta %></span><% } %>
+      </a>
+
+    <% } else { %>
+      <div class="ad__frame">
+        <%# House fallback so the layout never collapses when inventory is empty. %>
+        <a class="ad__house" href="/advertise" style="border:0;max-width:100%">
+          <div>
+            <h4><%= locale === 'en' ? 'Advertise with NewsPulse 24' : 'নিউজপালস ২৪-এ বিজ্ঞাপন দিন' %></h4>
+            <p><%= locale === 'en' ? 'This ' + slotId + ' slot is available — see the rate card.' : 'এই ' + slotId + ' স্লটটি খালি আছে — রেট কার্ড দেখুন।' %></p>
+          </div>
+          <span class="cta"><%= locale === 'en' ? 'Rate card' : 'রেট কার্ড' %></span>
+        </a>
+      </div>
+    <% } %>
+
+    <% if (isMobileSticky) { %>
+      <button class="ad__close" type="button" aria-label="<%= locale === 'en' ? 'Close ad' : 'বিজ্ঞাপন বন্ধ করুন' %>">×</button>
+    <% } %>
+  </div>
+<% } %>

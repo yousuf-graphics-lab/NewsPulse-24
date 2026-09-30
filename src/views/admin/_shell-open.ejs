@@ -1,0 +1,101 @@
+<%# Admin shell — head + sidebar + topbar. Included at the top of every page. %>
+<!doctype html>
+<html lang="bn" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <meta name="referrer" content="no-referrer">
+  <title><%= (typeof pageTitle !== 'undefined' ? pageTitle : 'Admin') %> · নিউজপালস ২৪ অ্যাডমিন</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@500;700;800&display=swap" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/assets/css/admin.css?v=1.0.0">
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+</head>
+<body>
+<div class="shell">
+  <aside class="side" data-open="false" id="sideNav">
+    <div class="side__brand">
+      <span class="mark">NP24</span>
+      <span><b>NewsPulse 24</b><small><%= locale === 'en' ? 'Control room' : 'নিয়ন্ত্রণ কক্ষ' %></small></span>
+    </div>
+
+    <nav class="side__nav" aria-label="Admin">
+      <div class="side__group"><%= locale === 'en' ? 'Overview' : 'সারসংক্ষেপ' %></div>
+      <a href="/admin" class="<%= currentPath === '/admin' ? 'active' : '' %>"><span class="ico">▦</span> <%= locale === 'en' ? 'Dashboard' : 'ড্যাশবোর্ড' %></a>
+      <a href="/admin/analytics" class="<%= currentPath === '/admin/analytics' ? 'active' : '' %>"><span class="ico">📈</span> <%= locale === 'en' ? 'Analytics' : 'অ্যানালিটিক্স' %></a>
+      <a href="/admin/assistant" class="<%= currentPath === '/admin/assistant' ? 'active' : '' %>"><span class="ico">✨</span> <%= locale === 'en' ? 'AI assistant' : 'এআই অ্যাসিস্ট' %></a>
+
+      <div class="side__group"><%= locale === 'en' ? 'Newsroom' : 'সংবাদ কক্ষ' %></div>
+      <% if (can('article.create') || can('article.editAny') || can('article.editOwn')) { %>
+        <a href="/admin/articles" class="<%= currentPath.indexOf('/admin/articles') === 0 ? 'active' : '' %>"><span class="ico">📰</span> <%= locale === 'en' ? 'Articles' : 'সংবাদ' %></a>
+      <% } %>
+      <% if (can('ticker.manage') || can('article.editAny')) { %>
+        <a href="/admin/ticker" class="<%= currentPath === '/admin/ticker' ? 'active' : '' %>"><span class="ico">⚡</span> <%= locale === 'en' ? 'Breaking ticker' : 'ব্রেকিং টিকার' %></a>
+      <% } %>
+      <% if (can('media.upload')) { %>
+        <a href="/admin/media" class="<%= currentPath === '/admin/media' ? 'active' : '' %>"><span class="ico">🖼️</span> <%= locale === 'en' ? 'Media library' : 'মিডিয়া' %></a>
+      <% } %>
+      <% if (can('comment.moderate')) { %>
+        <a href="/admin/comments" class="<%= currentPath === '/admin/comments' ? 'active' : '' %>"><span class="ico">💬</span> <%= locale === 'en' ? 'Comments' : 'মন্তব্য' %></a>
+      <% } %>
+      <% if (can('poll.manage') || can('article.editAny')) { %>
+        <a href="/admin/polls" class="<%= currentPath === '/admin/polls' ? 'active' : '' %>"><span class="ico">📊</span> <%= locale === 'en' ? 'Polls' : 'পোল' %></a>
+      <% } %>
+      <% if (can('pages.manage')) { %>
+        <a href="/admin/pages" class="<%= currentPath === '/admin/pages' ? 'active' : '' %>"><span class="ico">📄</span> <%= locale === 'en' ? 'Pages' : 'পেজ' %></a>
+      <% } %>
+
+      <div class="side__group"><%= locale === 'en' ? 'Revenue' : 'আয়' %></div>
+      <% if (can('ads.manage')) { %>
+        <a href="/admin/ads" class="<%= currentPath.indexOf('/admin/ads') === 0 ? 'active' : '' %>"><span class="ico">💰</span> <%= locale === 'en' ? 'Ads' : 'বিজ্ঞাপন' %></a>
+      <% } %>
+      <% if (can('newsletter.manage')) { %>
+        <a href="/admin/newsletter" class="<%= currentPath === '/admin/newsletter' ? 'active' : '' %>"><span class="ico">✉️</span> <%= locale === 'en' ? 'Newsletter' : 'নিউজলেটার' %></a>
+      <% } %>
+
+      <% if (can('*')) { %>
+      <div class="side__group"><%= locale === 'en' ? 'Administration' : 'প্রশাসন' %></div>
+        <a href="/admin/users" class="<%= currentPath === '/admin/users' ? 'active' : '' %>"><span class="ico">👥</span> <%= locale === 'en' ? 'Users & roles' : 'ব্যবহারকারী' %></a>
+        <a href="/admin/security" class="<%= currentPath === '/admin/security' ? 'active' : '' %>"><span class="ico">🛡️</span> <%= locale === 'en' ? 'Security' : 'নিরাপত্তা' %></a>
+        <a href="/admin/settings" class="<%= currentPath === '/admin/settings' ? 'active' : '' %>"><span class="ico">⚙️</span> <%= locale === 'en' ? 'Settings' : 'সেটিংস' %></a>
+      <% } %>
+
+      <div class="side__group"><%= locale === 'en' ? 'Site' : 'সাইট' %></div>
+      <a href="/" target="_blank" rel="noopener"><span class="ico">🌐</span> <%= locale === 'en' ? 'View website' : 'ওয়েবসাইট দেখুন' %></a>
+      <a href="/admin/account" class="<%= currentPath === '/admin/account' ? 'active' : '' %>"><span class="ico">👤</span> <%= locale === 'en' ? 'My account' : 'আমার অ্যাকাউন্ট' %></a>
+    </nav>
+
+    <div class="side__foot">
+      <div style="margin-bottom:8px"><%= user.email %></div>
+      <form method="post" action="/admin/logout">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit">↩ <%= locale === 'en' ? 'Sign out' : 'লগআউট' %></button>
+      </form>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="btn btn--ghost btn--sm menu-toggle" type="button" aria-label="Menu">☰</button>
+      <h1><%= typeof pageTitle !== 'undefined' ? pageTitle : '' %></h1>
+      <span class="spacer"></span>
+      <span class="who">
+        <span class="avatar" aria-hidden="true"><%= String(user.name || 'U').slice(0, 1).toUpperCase() %></span>
+        <span>
+          <b><%= user.name %></b><br>
+          <span class="role"><%= roles[user.role] ? roles[user.role].label : user.role %></span>
+        </span>
+      </span>
+    </div>
+
+    <div class="content">
+      <% if (flash.ok) { %><div class="flash flash--ok">✓ <%= flash.ok %></div><% } %>
+      <% if (flash.err) { %><div class="flash flash--err">⚠ <%= flash.err %></div><% } %>
+      <% if (flash.errors && flash.errors.length) { %>
+        <div class="form-errors">
+          <b><%= locale === 'en' ? 'Please fix these:' : 'এগুলো ঠিক করুন:' %></b>
+          <ul><% flash.errors.forEach(function (e) { %><li><%= e.field %>: <%= e.message %></li><% }); %></ul>
+        </div>
+      <% } %>

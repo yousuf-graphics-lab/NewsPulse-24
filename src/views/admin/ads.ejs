@@ -1,0 +1,105 @@
+<%- include('_shell-open') %>
+
+<div class="cards">
+  <div class="stat"><span class="label"><%= locale === 'en' ? 'Impressions (30d)' : 'ইমপ্রেশন (৩০দি)' %></span><span class="value"><%= h.bnNumber(stats.impressions) %></span></div>
+  <div class="stat"><span class="label"><%= locale === 'en' ? 'Clicks (30d)' : 'ক্লিক (৩০দি)' %></span><span class="value"><%= h.bnNumber(stats.clicks) %></span></div>
+  <div class="stat alt"><span class="label">CTR</span><span class="value"><%= stats.ctr.toFixed(2) %>%</span></div>
+  <div class="stat alt"><span class="label"><%= locale === 'en' ? 'Campaigns' : 'ক্যাম্পেইন' %></span><span class="value"><%= h.bnNumber(rows.length) %></span></div>
+</div>
+
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel__head">📍 <%= locale === 'en' ? 'Impressions by slot' : 'স্লট অনুযায়ী ইমপ্রেশন' %></div>
+    <div class="panel__body">
+      <div class="donut">
+        <% const maxSlot = Math.max.apply(null, stats.bySlot.map(function (s) { return s.impressions; }).concat([1])); %>
+        <% stats.bySlot.forEach(function (s) { %>
+          <div class="row">
+            <span style="font-size:12px"><%= s.slot %></span>
+            <span class="track"><span class="fill" style="width:<%= Math.round((s.impressions / maxSlot) * 100) %>%"></span></span>
+            <span class="val"><%= h.bnNumber(s.impressions) %></span>
+          </div>
+        <% }); %>
+        <% if (!stats.bySlot.length) { %><p class="muted small" style="margin:0"><%= locale === 'en' ? 'No impressions recorded yet — publish a campaign to start.' : 'এখনো কোনো ইমপ্রেশন নেই।' %></p><% } %>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel__head">🌍 <%= locale === 'en' ? 'Impressions by country' : 'দেশ অনুযায়ী ইমপ্রেশন' %></div>
+    <div class="panel__body">
+      <div class="donut">
+        <% const maxC = Math.max.apply(null, stats.byCountry.map(function (s) { return s.impressions; }).concat([1])); %>
+        <% stats.byCountry.forEach(function (s) { %>
+          <div class="row">
+            <span><%= s.country || '—' %></span>
+            <span class="track"><span class="fill" style="width:<%= Math.round((s.impressions / maxC) * 100) %>%"></span></span>
+            <span class="val"><%= h.bnNumber(s.impressions) %></span>
+          </div>
+        <% }); %>
+        <% if (!stats.byCountry.length) { %><p class="muted small" style="margin:0">—</p><% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel__head">
+    💰 <%= locale === 'en' ? 'Campaigns' : 'ক্যাম্পেইন' %>
+    <span class="spacer"></span>
+    <a class="btn btn--sm" href="/admin/ads/new">+ <%= locale === 'en' ? 'New campaign' : 'নতুন বিজ্ঞাপন' %></a>
+  </div>
+  <div class="panel__body tight table-wrap">
+    <table class="tbl">
+      <thead><tr>
+        <th><%= locale === 'en' ? 'Campaign' : 'ক্যাম্পেইন' %></th>
+        <th><%= locale === 'en' ? 'Slot' : 'স্লট' %></th>
+        <th><%= locale === 'en' ? 'Type' : 'টাইপ' %></th>
+        <th><%= locale === 'en' ? 'Status' : 'স্ট্যাটাস' %></th>
+        <th class="num"><%= locale === 'en' ? 'Impressions' : 'ইমপ্রেশন' %></th>
+        <th class="num"><%= locale === 'en' ? 'Clicks' : 'ক্লিক' %></th>
+        <th class="num">CTR</th>
+        <th></th>
+      </tr></thead>
+      <tbody>
+        <% rows.forEach(function (a) { %>
+          <tr>
+            <td>
+              <b><%= a.name %></b>
+              <div class="small muted"><%= a.advertiser || '—' %><% if (a.daily_cap) { %> · cap <%= h.bnNumber(a.daily_cap) %>/day (<%= h.bnNumber(a.served_today) %> today)<% } %></div>
+            </td>
+            <td><code class="small"><%= a.slot %></code></td>
+            <td><span class="tag"><%= a.kind %></span></td>
+            <td><span class="tag tag--<%= a.status === 'active' ? 'ok' : 'warn' %>"><%= a.status %></span></td>
+            <td class="num"><%= h.bnNumber(a.impressions) %></td>
+            <td class="num"><%= h.bnNumber(a.clicks) %></td>
+            <td class="num"><%= a.impressions ? ((a.clicks * 100 / a.impressions).toFixed(2) + '%') : '—' %></td>
+            <td class="actions">
+              <a class="btn btn--ghost btn--sm" href="/admin/ads/<%= a.id %>/edit"><%= locale === 'en' ? 'Edit' : 'সম্পাদনা' %></a>
+              <form method="post" action="/admin/ads/<%= a.id %>/delete" data-confirm="<%= locale === 'en' ? 'Delete this campaign?' : 'ক্যাম্পেইন মুছবেন?' %>" style="display:inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="btn btn--danger btn--sm" type="submit">✕</button>
+              </form>
+            </td>
+          </tr>
+        <% }); %>
+        <% if (!rows.length) { %><tr><td colspan="8" class="muted"><%= locale === 'en' ? 'No campaigns yet.' : 'এখনো কোনো ক্যাম্পেইন নেই।' %></td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel__head">🧾 <%= locale === 'en' ? 'Ad inventory reference' : 'বিজ্ঞাপন স্লট তালিকা' %></div>
+  <div class="panel__body tight table-wrap">
+    <table class="tbl">
+      <thead><tr><th>Slot ID</th><th><%= locale === 'en' ? 'Placement' : 'অবস্থান' %></th><th><%= locale === 'en' ? 'Devices' : 'ডিভাইস' %></th></tr></thead>
+      <tbody>
+        <% adSlots.forEach(function (s) { %>
+          <tr><td><code><%= s.id %></code></td><td><%= s.label %></td><td><%= s.group %></td></tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('_shell-close') %>

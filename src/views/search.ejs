@@ -1,0 +1,46 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<div class="wrap layout">
+  <main id="main">
+    <div class="static-page" style="padding:22px 24px;margin-bottom:18px">
+      <h1 style="font-size:25px"><%= locale === 'en' ? 'Search' : 'অনুসন্ধান' %>: “<%= query %>”</h1>
+      <p class="muted" style="margin:0">
+        <%= locale === 'en' ? h.bnNumber(total) + ' results' : h.bnNumber(total) + 'টি ফলাফল' %>
+        <% if (category) { %> · <%= locale === 'en' ? 'category' : 'বিভাগ' %>: <a href="/category/<%= category %>"><%= category %></a><% } %>
+      </p>
+    </div>
+
+    <% if (!articles.length) { %>
+      <div class="static-page">
+        <p><%= locale === 'en' ? 'Nothing matched your search. Try a shorter or different term.' : 'আপনার অনুসন্ধানে কিছু পাওয়া যায়নি। ভিন্ন বা ছোট শব্দ দিয়ে চেষ্টা করুন।' %></p>
+        <form action="/search" method="get" class="form" style="max-width:420px">
+          <input name="q" type="search" value="<%= query %>" placeholder="<%= locale === 'en' ? 'Search again…' : 'আবার খুঁজুন…' %>">
+          <button class="btn" type="submit"><%= locale === 'en' ? 'Search' : 'খুঁজুন' %></button>
+        </form>
+      </div>
+    <% } else { %>
+      <div class="grid grid--3">
+        <% articles.forEach(function (a) { %>
+          <%- include('partials/article-card', { a: a }) %>
+        <% }); %>
+      </div>
+      <%- include('partials/pagination', { page: page, totalPages: totalPages, baseUrl: '/search?q=' + encodeURIComponent(query) + (category ? '&category=' + category : '') }) %>
+    <% } %>
+  </main>
+
+  <aside class="sidebar">
+    <%- include('partials/ad-slot', { slotId: 'sidebar-top' }) %>
+    <div class="widget">
+      <div class="widget__head">🗂️ <%= locale === 'en' ? 'Browse categories' : 'বিভাগ ঘুরুন' %></div>
+      <div class="widget__body tagcloud">
+        <% categories.forEach(function (c) { %>
+          <a href="/category/<%= c.slug %>"><%= locale === 'en' ? c.name_en : c.name_bn %></a>
+        <% }); %>
+      </div>
+    </div>
+    <%- include('partials/ad-slot', { slotId: 'sidebar-sticky' }) %>
+  </aside>
+</div>
+
+<%- include('partials/footer') %>

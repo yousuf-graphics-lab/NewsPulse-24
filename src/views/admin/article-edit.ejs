@@ -1,0 +1,240 @@
+<%- include('_shell-open') %>
+<%
+  const v = values || {};
+  const action = article ? '/admin/articles/' + article.id : '/admin/articles';
+  const val = function (key, fallback) { return v && v[key] !== undefined && v[key] !== null ? v[key] : (fallback === undefined ? '' : fallback); };
+%>
+
+<form method="post" action="<%= action %>" id="articleForm">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <div class="grid-side">
+    <div>
+      <div class="panel">
+        <div class="panel__head">
+          ✍️ <%= locale === 'en' ? 'Story' : 'সংবাদ' %>
+          <span class="spacer"></span>
+          <% if (article) { %><a class="btn btn--ghost btn--sm" href="/news/<%= article.slug %>" target="_blank" rel="noopener"><%= locale === 'en' ? 'Preview' : 'প্রিভিউ' %> ↗</a><% } %>
+        </div>
+        <div class="panel__body">
+          <div class="field">
+            <label for="title_bn"><%= locale === 'en' ? 'Headline (Bangla) *' : 'শিরোনাম (বাংলা) *' %></label>
+            <input id="title_bn" name="title_bn" required maxlength="300" value="<%= val('title_bn') %>" data-slug-source>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="title_en"><%= locale === 'en' ? 'Headline (English)' : 'শিরোনাম (ইংরেজি)' %></label>
+              <input id="title_en" name="title_en" maxlength="300" value="<%= val('title_en') %>">
+            </div>
+            <div class="field">
+              <label for="slug">URL slug</label>
+              <input id="slug" name="slug" maxlength="140" value="<%= val('slug') %>" placeholder="auto-from-headline">
+              <span class="hint">/news/<span id="slugPreview"><%= val('slug') %></span></span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="subtitle"><%= locale === 'en' ? 'Standfirst / subtitle' : 'সাব-হেডলাইন' %></label>
+            <input id="subtitle" name="subtitle" maxlength="400" value="<%= val('subtitle') %>">
+          </div>
+          <div class="field">
+            <label for="excerpt"><%= locale === 'en' ? 'Summary (cards, SEO, RSS)' : 'সারসংক্ষেপ (কার্ড, SEO, RSS)' %></label>
+            <textarea id="excerpt" name="excerpt" maxlength="600" style="min-height:70px"><%= val('excerpt') %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">📝 <%= locale === 'en' ? 'Body (Bangla) *' : 'মূল লেখা (বাংলা) *' %></div>
+        <div class="panel__body">
+          <div class="editor">
+            <div class="editor__tools" role="toolbar" aria-label="Formatting">
+              <button type="button" data-tag="h2">H2</button>
+              <button type="button" data-tag="h3">H3</button>
+              <button type="button" data-tag="b"><b>B</b></button>
+              <button type="button" data-tag="i"><i>I</i></button>
+              <button type="button" data-tag="q">❝ <%= locale === 'en' ? 'Quote' : 'উদ্ধৃতি' %></button>
+              <button type="button" data-tag="ul">• <%= locale === 'en' ? 'List' : 'লিস্ট' %></button>
+              <button type="button" data-tag="a">🔗 <%= locale === 'en' ? 'Link' : 'লিংক' %></button>
+              <button type="button" data-tag="img">🖼 <%= locale === 'en' ? 'Image' : 'ছবি' %></button>
+              <button type="button" data-tag="p">¶</button>
+            </div>
+            <textarea id="bodyEditor" name="body_bn" required class="tall" style="border:0;min-height:380px;padding:14px"><%= val('body_bn') %></textarea>
+            <div class="editor__foot">
+              <span class="count"></span>
+              <span><%= locale === 'en' ? 'HTML is sanitised on save — scripts and event handlers are stripped.' : 'সংরক্ষণের সময় HTML স্যানিটাইজ হয় — স্ক্রিপ্ট সরিয়ে ফেলা হয়।' %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">🌐 <%= locale === 'en' ? 'English body (optional)' : 'ইংরেজি লেখা (ঐচ্ছিক)' %></div>
+        <div class="panel__body">
+          <textarea name="body_en" style="width:100%;min-height:140px;padding:12px;border:1px solid var(--line);border-radius:8px"><%= val('body_en') %></textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="panel__head">🚀 <%= locale === 'en' ? 'Publish' : 'প্রকাশ' %></div>
+        <div class="panel__body">
+          <div class="field">
+            <label for="status"><%= locale === 'en' ? 'Status' : 'স্ট্যাটাস' %></label>
+            <select id="status" name="status">
+              <% ['draft', 'pending', 'published', 'archived'].forEach(function (s) { %>
+                <option value="<%= s %>" <%= val('status', 'draft') === s ? 'selected' : '' %>><%= s %></option>
+              <% }); %>
+            </select>
+          </div>
+          <label class="check"><input type="checkbox" name="is_breaking" value="1" <%= Number(val('is_breaking')) ? 'checked' : '' %>> <%= locale === 'en' ? 'Breaking news (ticker)' : 'ব্রেকিং নিউজ (টিকার)' %></label>
+          <label class="check"><input type="checkbox" name="is_featured" value="1" <%= Number(val('is_featured')) ? 'checked' : '' %>> <%= locale === 'en' ? 'Feature on homepage' : 'প্রচ্ছদে ফিচার' %></label>
+          <label class="check"><input type="checkbox" name="is_sponsored" value="1" <%= Number(val('is_sponsored')) ? 'checked' : '' %>> <%= locale === 'en' ? 'Sponsored content (labelled)' : 'স্পনসরড (লেবেলযুক্ত)' %></label>
+          <label class="check"><input type="checkbox" name="noindex" value="1" <%= Number(val('noindex')) ? 'checked' : '' %>> <%= locale === 'en' ? 'Hide from search engines' : 'সার্চ ইঞ্জিন থেকে লুকান' %></label>
+          <div class="field" style="margin-top:10px">
+            <label for="sponsor_label"><%= locale === 'en' ? 'Sponsor label' : 'স্পনসর লেবেল' %></label>
+            <input id="sponsor_label" name="sponsor_label" maxlength="60" value="<%= val('sponsor_label') %>" placeholder="বিজ্ঞাপন">
+          </div>
+          <button class="btn" type="submit" style="width:100%"><%= article ? (locale === 'en' ? 'Save changes' : 'পরিবর্তন সংরক্ষণ') : (locale === 'en' ? 'Create story' : 'সংবাদ তৈরি') %></button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">🗂 <%= locale === 'en' ? 'Placement' : 'অবস্থান' %></div>
+        <div class="panel__body">
+          <div class="field">
+            <label for="category_id"><%= locale === 'en' ? 'Category' : 'বিভাগ' %></label>
+            <select id="category_id" name="category_id">
+              <option value="">—</option>
+              <% categories.forEach(function (c) { %>
+                <option value="<%= c.id %>" <%= String(val('category_id')) === String(c.id) ? 'selected' : '' %>><%= c.name_bn %> (<%= c.name_en %>)</option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="field">
+            <label for="author_id"><%= locale === 'en' ? 'Author' : 'লেখক' %></label>
+            <select id="author_id" name="author_id">
+              <option value="">—</option>
+              <% authors.forEach(function (a) { %>
+                <option value="<%= a.id %>" <%= String(val('author_id')) === String(a.id) ? 'selected' : '' %>><%= a.name %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="field">
+            <label for="tags"><%= locale === 'en' ? 'Tags (comma separated)' : 'ট্যাগ (কমা দিয়ে)' %></label>
+            <input id="tags" name="tags" maxlength="400" value="<%= val('tags') %>">
+          </div>
+          <div class="field">
+            <label for="media_type"><%= locale === 'en' ? 'Media type' : 'মিডিয়া টাইপ' %></label>
+            <select id="media_type" name="media_type">
+              <% ['text', 'video', 'gallery', 'audio'].forEach(function (m) { %>
+                <option value="<%= m %>" <%= val('media_type', 'text') === m ? 'selected' : '' %>><%= m %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="field">
+            <label for="video_url"><%= locale === 'en' ? 'Video URL (YouTube/Vimeo)' : 'ভিডিও লিংক' %></label>
+            <input id="video_url" name="video_url" maxlength="600" value="<%= val('video_url') %>" placeholder="https://youtube.com/watch?v=…">
+          </div>
+          <div class="field">
+            <label for="gallery_json"><%= locale === 'en' ? 'Gallery (JSON array)' : 'গ্যালারি (JSON)' %></label>
+            <textarea id="gallery_json" name="gallery_json" style="min-height:70px" placeholder='[{"src":"/media/x.jpg","alt":"…"}]'><%= val('gallery_json') %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">🖼 <%= locale === 'en' ? 'Cover image' : 'কভার ছবি' %></div>
+        <div class="panel__body">
+          <div class="field">
+            <label for="cover_image"><%= locale === 'en' ? 'Image URL' : 'ছবির লিংক' %></label>
+            <input id="cover_image" name="cover_image" maxlength="600" value="<%= val('cover_image') %>">
+            <span class="hint"><%= locale === 'en' ? 'Pick from the library below, or paste a URL.' : 'নিচের লাইব্রেরি থেকে বাছুন, অথবা লিংক দিন।' %></span>
+          </div>
+          <% if (val('cover_image')) { %><img src="<%= h.safeUrl(val('cover_image')) %>" alt="" style="width:100%;border-radius:8px;margin-bottom:10px"><% } %>
+          <div class="field-row">
+            <div class="field"><label for="cover_caption"><%= locale === 'en' ? 'Caption' : 'ক্যাপশন' %></label><input id="cover_caption" name="cover_caption" maxlength="300" value="<%= val('cover_caption') %>"></div>
+            <div class="field"><label for="cover_credit"><%= locale === 'en' ? 'Credit' : 'ক্রেডিট' %></label><input id="cover_credit" name="cover_credit" maxlength="120" value="<%= val('cover_credit') %>"></div>
+          </div>
+          <details>
+            <summary class="small muted" style="cursor:pointer"><%= locale === 'en' ? 'Choose from media library' : 'মিডিয়া লাইব্রেরি থেকে বাছুন' %></summary>
+            <div class="media-grid" style="margin-top:10px">
+              <% recentMedia.forEach(function (m) { %>
+                <div class="media-item">
+                  <img src="<%= m.url %>" alt="<%= m.alt || '' %>" loading="lazy">
+                  <div class="meta"><code data-copy="<%= m.url %>"><%= m.url.slice(-16) %></code></div>
+                </div>
+              <% }); %>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">🔎 SEO <%= locale === 'en' ? '& sourcing' : 'ও সূত্র' %></div>
+        <div class="panel__body">
+          <div class="field"><label for="seo_title">SEO title</label><input id="seo_title" name="seo_title" maxlength="120" value="<%= val('seo_title') %>"></div>
+          <div class="field"><label for="seo_desc">Meta description</label><textarea id="seo_desc" name="seo_desc" maxlength="220" style="min-height:60px"><%= val('seo_desc') %></textarea></div>
+          <div class="field"><label for="canonical_url">Canonical URL</label><input id="canonical_url" name="canonical_url" maxlength="600" value="<%= val('canonical_url') %>"></div>
+          <div class="field-row">
+            <div class="field"><label for="source_name"><%= locale === 'en' ? 'Source name' : 'সূত্রের নাম' %></label><input id="source_name" name="source_name" maxlength="120" value="<%= val('source_name') %>"></div>
+            <div class="field"><label for="source_url"><%= locale === 'en' ? 'Source URL' : 'সূত্রের লিংক' %></label><input id="source_url" name="source_url" maxlength="600" value="<%= val('source_url') %>"></div>
+          </div>
+        </div>
+      </div>
+
+      <% if (article && can('article.delete')) { %>
+        <div class="panel">
+          <div class="panel__head" style="color:var(--red)">⚠ <%= locale === 'en' ? 'Danger zone' : 'সতর্কতা' %></div>
+          <div class="panel__body">
+            <form method="post" action="/admin/articles/<%= article.id %>/delete" data-confirm="<%= locale === 'en' ? 'Permanently delete this story and its comments?' : 'সংবাদ ও এর মন্তব্য স্থায়ীভাবে মুছবেন?' %>">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button class="btn btn--danger" type="submit" style="width:100%"><%= locale === 'en' ? 'Delete story' : 'সংবাদ মুছুন' %></button>
+            </form>
+            <p class="small muted" style="margin:10px 0 0"><%= locale === 'en' ? 'Consider “archived” instead — it keeps the URL and the correction history.' : 'বিকল্প হিসেবে “archived” ব্যবহার করুন — এতে URL ও সংশোধনের ইতিহাস থাকে।' %></p>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</form>
+
+      <div class="panel">
+        <div class="panel__head">🛡️ <%= locale === 'en' ? 'Corrections & transparency' : 'সংশোধনী ও স্বচ্ছতা' %></div>
+        <div class="panel__body">
+          <% if (corrections.length) { %>
+            <ul style="margin-top:0">
+              <% corrections.forEach(function (c) { %>
+                <li style="margin-bottom:8px"><span class="tag tag--red"><%= c.kind %></span> <%= c.note %> <span class="muted small">— <%= h.formatDate(c.created_at, locale) %></span></li>
+              <% }); %>
+            </ul>
+          <% } else { %>
+            <p class="muted small" style="margin-top:0"><%= locale === 'en' ? 'No corrections recorded for this story.' : 'এই সংবাদে কোনো সংশোধনী নেই।' %></p>
+          <% } %>
+          <% if (article && (can('corrections.create') || can('corrections.manage'))) { %>
+            <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
+            <form method="post" action="/admin/articles/<%= article.id %>/correction">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <div class="field-row">
+                <div class="field">
+                  <label for="kind"><%= locale === 'en' ? 'Type' : 'ধরন' %></label>
+                  <select id="kind" name="kind">
+                    <option value="correction"><%= locale === 'en' ? 'Correction' : 'সংশোধন' %></option>
+                    <option value="clarification"><%= locale === 'en' ? 'Clarification' : 'স্পষ্টীকরণ' %></option>
+                    <option value="update"><%= locale === 'en' ? 'Update' : 'হালনাগাদ' %></option>
+                    <option value="retraction"><%= locale === 'en' ? 'Retraction' : 'প্রত্যাহার' %></option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="note"><%= locale === 'en' ? 'What changed' : 'কী বদলেছে' %></label>
+                  <input id="note" name="note" required maxlength="2000">
+                </div>
+              </div>
+              <button class="btn btn--sm" type="submit"><%= locale === 'en' ? 'Publish correction' : 'সংশোধনী প্রকাশ' %></button>
+            </form>
+          <% } %>
+        </div>
+      </div>
+
+<%- include('_shell-close') %>

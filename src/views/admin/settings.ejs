@@ -1,0 +1,138 @@
+<%- include('_shell-open') %>
+
+<form method="post" action="/admin/settings">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <div class="grid-side">
+    <div>
+      <div class="panel">
+        <div class="panel__head">🏷 <%= locale === 'en' ? 'Identity' : 'পরিচয়' %></div>
+        <div class="panel__body">
+          <div class="field-row">
+            <div class="field"><label for="site_name_bn"><%= locale === 'en' ? 'Site name (Bangla)' : 'সাইটের নাম (বাংলা)' %></label><input id="site_name_bn" name="site_name_bn" value="<%= values.site_name_bn %>"></div>
+            <div class="field"><label for="site_name_en"><%= locale === 'en' ? 'Site name (English)' : 'সাইটের নাম (ইংরেজি)' %></label><input id="site_name_en" name="site_name_en" value="<%= values.site_name_en %>"></div>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="tagline_bn">Tagline (বাংলা)</label><input id="tagline_bn" name="tagline_bn" value="<%= values.tagline_bn %>"></div>
+            <div class="field"><label for="tagline_en">Tagline (English)</label><input id="tagline_en" name="tagline_en" value="<%= values.tagline_en %>"></div>
+          </div>
+          <div class="field"><label for="address"><%= locale === 'en' ? 'Address' : 'ঠিকানা' %></label><input id="address" name="address" value="<%= values.address %>"></div>
+          <div class="field-row">
+            <div class="field"><label for="contact_email"><%= locale === 'en' ? 'Newsroom email' : 'সংবাদ কক্ষের ইমেইল' %></label><input id="contact_email" name="contact_email" type="email" value="<%= values.contact_email %>"></div>
+            <div class="field"><label for="contact_phone"><%= locale === 'en' ? 'Phone' : 'ফোন' %></label><input id="contact_phone" name="contact_phone" value="<%= values.contact_phone %>"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">🔗 <%= locale === 'en' ? 'Social & live' : 'সোশ্যাল ও লাইভ' %></div>
+        <div class="panel__body">
+          <% [['facebook_url', 'Facebook'], ['twitter_url', 'X / Twitter'], ['youtube_url', 'YouTube'], ['instagram_url', 'Instagram'], ['tiktok_url', 'TikTok'], ['whatsapp_channel', 'WhatsApp channel'], ['live_tv_url', 'Live TV embed URL']].forEach(function (pair) { %>
+            <div class="field">
+              <label for="<%= pair[0] %>"><%= pair[1] %></label>
+              <input id="<%= pair[0] %>" name="<%= pair[0] %>" value="<%= values[pair[0]] || '' %>" placeholder="https://">
+            </div>
+          <% }); %>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">💰 <%= locale === 'en' ? 'Monetisation & analytics' : 'মনিটাইজেশন ও অ্যানালিটিক্স' %></div>
+        <div class="panel__body">
+          <div class="field-row">
+            <div class="field"><label for="adsense_publisher_id">AdSense publisher ID</label><input id="adsense_publisher_id" name="adsense_publisher_id" value="<%= values.adsense_publisher_id || '' %>" placeholder="pub-0000000000000000"><span class="hint"><%= locale === 'en' ? 'Written to /ads.txt automatically.' : 'স্বয়ংক্রিয়ভাবে /ads.txt-এ যোগ হয়।' %></span></div>
+            <div class="field"><label for="ga_measurement_id">GA4 measurement ID</label><input id="ga_measurement_id" name="ga_measurement_id" value="<%= values.ga_measurement_id || '' %>" placeholder="G-XXXXXXXXXX"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">📝 <%= locale === 'en' ? 'Footer & about copy' : 'ফুটার ও পরিচিতি' %></div>
+        <div class="panel__body">
+          <div class="field"><label for="footer_about_bn">About (বাংলা)</label><textarea id="footer_about_bn" name="footer_about_bn" style="min-height:90px"><%= values.footer_about_bn %></textarea></div>
+          <div class="field"><label for="footer_about_en">About (English)</label><textarea id="footer_about_en" name="footer_about_en" style="min-height:90px"><%= values.footer_about_en %></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="panel__head">⚙️ <%= locale === 'en' ? 'Feature switches' : 'ফিচার সুইচ' %></div>
+        <div class="panel__body">
+          <% [['ticker_enabled', 'Breaking news ticker'], ['breaking_flash', 'Flash breaking label'], ['comments_enabled', 'Comments'], ['comments_moderation', 'Moderate comments before publishing'], ['newsletter_enabled', 'Newsletter'], ['assistant_enabled', 'AI assistant widget']].forEach(function (pair) { %>
+            <label class="check"><input type="checkbox" name="<%= pair[0] %>" value="1" <%= values[pair[0]] === '1' ? 'checked' : '' %>> <%= pair[1] %></label>
+          <% }); %>
+          <div class="field" style="margin-top:12px">
+            <label for="ticker_speed"><%= locale === 'en' ? 'Ticker speed (seconds per loop)' : 'টিকারের গতি (সেকেন্ড)' %></label>
+            <input id="ticker_speed" name="ticker_speed" type="number" min="15" max="180" value="<%= values.ticker_speed %>">
+          </div>
+          <button class="btn" type="submit" style="width:100%"><%= locale === 'en' ? 'Save settings' : 'সেটিংস সংরক্ষণ' %></button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">✨ <%= locale === 'en' ? 'AI assistant copy' : 'এআই অ্যাসিস্ট' %></div>
+        <div class="panel__body">
+          <div class="field"><label for="assistant_greeting_bn">Greeting (বাংলা)</label><textarea id="assistant_greeting_bn" name="assistant_greeting_bn" style="min-height:80px"><%= values.assistant_greeting_bn %></textarea></div>
+          <div class="field"><label for="assistant_greeting_en">Greeting (English)</label><textarea id="assistant_greeting_en" name="assistant_greeting_en" style="min-height:80px"><%= values.assistant_greeting_en %></textarea></div>
+          <p class="small muted" style="margin:0">
+            <%= locale === 'en'
+              ? 'Provider, model and API key live in .env (AI_PROVIDER / AI_API_KEY). With no key the assistant answers from the site’s own data in বাংলা, English and Banglish.'
+              : 'প্রোভাইডার, মডেল ও API কি .env-এ থাকে (AI_PROVIDER / AI_API_KEY)। কি না থাকলে অ্যাসিস্ট সাইটের নিজের তথ্য থেকে উত্তর দেয়।' %>
+          </p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">🗂 <%= locale === 'en' ? 'Categories' : 'বিভাগ' %></div>
+        <div class="panel__body tight table-wrap">
+          <table class="tbl">
+            <tbody>
+              <% categories.forEach(function (c) { %>
+                <tr>
+                  <td><span class="tag" style="background:<%= c.color %>;color:#fff;border-color:<%= c.color %>"><%= c.name_bn %></span><br><span class="small muted"><%= c.slug %></span></td>
+                  <td class="num"><%= h.bnNumber(c.article_count || 0) %></td>
+                  <td>
+                    <form method="post" action="/admin/categories/<%= c.id %>/delete" data-confirm="<%= locale === 'en' ? 'Delete this category?' : 'বিভাগ মুছবেন?' %>" style="display:inline">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="btn btn--danger btn--sm" type="submit">✕</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel__body" style="border-top:1px solid var(--line)">
+          <form method="post" action="/admin/categories">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="field-row">
+              <div class="field"><label for="name_bn"><%= locale === 'en' ? 'Name (বাংলা)' : 'নাম (বাংলা)' %></label><input id="name_bn" name="name_bn" required maxlength="80"></div>
+              <div class="field"><label for="name_en"><%= locale === 'en' ? 'Name (English)' : 'নাম (ইংরেজি)' %></label><input id="name_en" name="name_en" maxlength="80"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="slug">Slug</label><input id="slug" name="slug" maxlength="80"></div>
+              <div class="field"><label for="color"><%= locale === 'en' ? 'Colour' : 'রঙ' %></label><input id="color" name="color" value="#e11d2e" maxlength="7"></div>
+            </div>
+            <div class="field"><label for="description"><%= locale === 'en' ? 'Description' : 'বিবরণ' %></label><input id="description" name="description" maxlength="300"></div>
+            <button class="btn btn--sm" type="submit"><%= locale === 'en' ? 'Add / update category' : 'বিভাগ যোগ/হালনাগাদ' %></button>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">💾 <%= locale === 'en' ? 'Backup' : 'ব্যাকআপ' %></div>
+        <div class="panel__body">
+          <p class="small muted" style="margin-top:0"><%= locale === 'en' ? 'Takes a consistent SQLite snapshot into ./backups.' : './backups ফোল্ডারে SQLite স্ন্যাপশট নেয়।' %></p>
+          <button class="btn btn--ink" type="submit" form="backupForm"><%= locale === 'en' ? 'Backup now' : 'এখনই ব্যাকআপ' %></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<form method="post" action="/admin/backup" id="backupForm">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+</form>
+
+<%- include('_shell-close') %>

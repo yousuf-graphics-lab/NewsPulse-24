@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>টু-ফ্যাক্টর যাচাই · নিউজপালস ২৪</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/assets/css/admin.css?v=1.0.0">
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="brand"><span class="mark">2FA</span><span><h1>দ্বি-স্তর যাচাই</h1><p class="sub">আপনার অথেনটিকেটর অ্যাপের ৬ সংখ্যার কোড দিন</p></span></div>
+    <% if (typeof error !== 'undefined' && error) { %><div class="flash flash--err">⚠ <%= error %></div><% } %>
+    <form method="post" action="/admin/2fa">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="field">
+        <label for="token">কোড</label>
+        <input id="token" name="token" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required autocomplete="one-time-code" autofocus
+               style="text-align:center;font-size:26px;letter-spacing:.4em;font-family:var(--font-en)">
+      </div>
+      <button class="btn" type="submit">যাচাই করুন</button>
+    </form>
+    <div class="foot"><a href="/admin/login" style="color:var(--red-700)">← অন্য অ্যাকাউন্টে লগইন</a></div>
+  </div>
+</div>
+</body>
+</html>

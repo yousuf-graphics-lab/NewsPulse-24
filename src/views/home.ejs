@@ -1,0 +1,155 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<%- include('partials/ad-slot', { slotId: 'top-leaderboard' }) %>
+<%- include('partials/ad-slot', { slotId: 'below-ticker' }) %>
+
+<div class="wrap layout">
+  <main id="main">
+    <% if (lead.length) { %>
+      <section class="hero" aria-label="<%= locale === 'en' ? 'Top stories' : 'প্রধান সংবাদ' %>">
+        <% const hero = lead[0]; %>
+        <article class="hero__lead">
+          <% if (hero.cover) { %><img src="<%= hero.cover %>" alt="" width="1200" height="675" fetchpriority="high"><% } %>
+          <div class="hero__content">
+            <div class="row" style="gap:7px">
+              <% if (hero.category) { %><a href="/category/<%= hero.categorySlug %>"><span class="badge-cat"><%= hero.category %></span></a><% } %>
+              <% if (Number(hero.is_breaking)) { %><span class="badge-cat badge-live"><%= locale === 'en' ? 'BREAKING' : 'ব্রেকিং' %></span><% } %>
+              <% if (Number(hero.is_demo)) { %><span class="chip-demo"><%= locale === 'en' ? 'Demo content' : 'নমুনা কনটেন্ট' %></span><% } %>
+            </div>
+            <h1><a href="<%= hero.url %>"><%= hero.title %></a></h1>
+            <p><%= hero.excerpt %></p>
+            <div class="card__meta" style="color:#b9bbc4;margin-top:10px">
+              <span><%= hero.author_name || site.site_name_bn %></span>
+              <span class="dot"></span>
+              <time datetime="<%= hero.published_at || '' %>"><%= hero.timeAgo %></time>
+              <span class="dot"></span>
+              <span>👁 <%= hero.viewsLabel %></span>
+            </div>
+          </div>
+        </article>
+
+        <div class="hero__side">
+          <% lead.slice(1, 4).forEach(function (a) { %>
+            <%- include('partials/article-card', { a: a, isCompact: true }) %>
+          <% }); %>
+        </div>
+      </section>
+    <% } %>
+
+    <% if (poll) { %>
+      <%
+        let pollOptions = [];
+        try { pollOptions = JSON.parse(poll.options || '[]'); } catch (e) { pollOptions = []; }
+        const pollTotal = pollOptions.reduce(function (s, o) { return s + (o.votes || 0); }, 0) || 1;
+      %>
+      <div class="panel" style="background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px;margin-top:22px">
+        <div class="row between" style="margin-bottom:10px">
+          <b><%= locale === 'en' ? (poll.question_en || poll.question_bn) : poll.question_bn %></b>
+          <span class="muted small"><%= locale === 'en' ? 'Reader poll' : 'পাঠক জরিপ' %></span>
+        </div>
+        <div class="poll" data-id="<%= poll.id %>" data-voted="false">
+          <% pollOptions.forEach(function (o) { %>
+            <button type="button" class="poll__opt" data-option="<%= o.id %>">
+              <span class="bar"></span>
+              <span><%= locale === 'en' ? (o.en || o.bn) : o.bn %></span>
+              <span class="pct"></span>
+            </button>
+          <% }); %>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="section-head">
+      <h2><%= locale === 'en' ? 'Latest news' : 'সর্বশেষ সংবাদ' %></h2>
+      <a class="more" href="/category/national"><%= locale === 'en' ? 'See all' : 'সব দেখুন' %> ›</a>
+    </div>
+    <div class="pills" role="navigation" aria-label="<%= locale === 'en' ? 'Browse by category' : 'বিভাগ অনুযায়ী' %>">
+      <a class="pill pill--on" href="/"><%= locale === 'en' ? 'All' : 'সব' %></a>
+      <% categories.forEach(function (c) { %>
+        <a class="pill" href="/category/<%= c.slug %>"><%= locale === 'en' ? c.name_en : c.name_bn %></a>
+      <% }); %>
+    </div>
+
+    <div class="grid grid--3">
+      <% latest.slice(0, 5).forEach(function (a) { %>
+        <%- include('partials/article-card', { a: a }) %>
+      <% }); %>
+      <%- include('partials/ad-slot', { slotId: 'between-cards', variantClass: 'ad--inline' }) %>
+      <% latest.slice(5, 9).forEach(function (a) { %>
+        <%- include('partials/article-card', { a: a }) %>
+      <% }); %>
+    </div>
+
+    <% if (videoStories.length) { %>
+      <div class="section-head">
+        <h2>📹 <%= locale === 'en' ? 'Video' : 'ভিডিও' %></h2>
+        <a class="more" href="/live"><%= locale === 'en' ? 'Live TV' : 'লাইভ টিভি' %> ›</a>
+      </div>
+      <div class="video-grid">
+        <% videoStories.forEach(function (a) { %>
+          <%- include('partials/article-card', { a: a, isCompact: true }) %>
+        <% }); %>
+      </div>
+    <% } %>
+
+    <% groups.forEach(function (group, gi) { %>
+      <% if (group.articles.length) { %>
+        <div class="section-head">
+          <h2 style="border:0"><span style="color:<%= group.category.color %>">■</span> <%= locale === 'en' ? group.category.name_en : group.category.name_bn %></h2>
+          <a class="more" href="/category/<%= group.category.slug %>"><%= locale === 'en' ? 'More' : 'আরও' %> ›</a>
+        </div>
+        <div class="grid grid--4">
+          <% group.articles.forEach(function (a) { %>
+            <%- include('partials/article-card', { a: a, isCompact: true }) %>
+          <% }); %>
+        </div>
+        <% if (gi === 1) { %>
+          <%- include('partials/ad-slot', { slotId: 'in-article', variantClass: 'ad--inline' }) %>
+        <% } %>
+      <% } %>
+    <% }); %>
+  </main>
+
+  <aside class="sidebar">
+    <a class="live-widget" href="/live" aria-label="<%= locale === 'en' ? 'Watch live TV' : 'লাইভ টিভি দেখুন' %>">
+      <span class="live-widget__badge"><i></i> <%= locale === 'en' ? 'LIVE' : 'লাইভ' %></span>
+      <span class="live-widget__play" aria-hidden="true">▶</span>
+      <span class="live-widget__title"><%= locale === 'en' ? 'NewsPulse 24 Live' : 'নিউজপালস ২৪ লাইভ' %></span>
+      <span class="live-widget__sub"><%= locale === 'en' ? 'Real-time news. Anytime, anywhere.' : 'রিয়েল-টাইম সংবাদ। যেকোনো সময়, যেকোনো জায়গায়।' %></span>
+    </a>
+    <%- include('partials/ad-slot', { slotId: 'sidebar-top' }) %>
+
+    <div class="widget">
+      <div class="widget__head">🔥 <span class="accent"><%= locale === 'en' ? 'Trending now' : 'এখন ট্রেন্ডিং' %></span></div>
+      <div class="widget__body">
+        <ol class="ranked">
+          <% mostRead.forEach(function (a) { %>
+            <li>
+              <a href="<%= a.url %>">
+                <%= a.title %>
+                <span class="meta"><%= a.category || '' %> · 👁 <%= h.compactNumber(a.views) %></span>
+              </a>
+            </li>
+          <% }); %>
+        </ol>
+      </div>
+    </div>
+
+    <%- include('partials/ad-slot', { slotId: 'sidebar-sticky' }) %>
+
+    <% const tagList = []; %>
+    <div class="widget">
+      <div class="widget__head">🏷️ <%= locale === 'en' ? 'Popular topics' : 'আলোচিত বিষয়' %></div>
+      <div class="widget__body tagcloud">
+        <% trending.slice(0, 8).forEach(function (a) { %>
+          <a href="/news/<%= a.slug %>"><%= locale === 'en' ? (a.title_en || a.title_bn).slice(0, 34) : a.title_bn.slice(0, 30) %></a>
+        <% }); %>
+      </div>
+    </div>
+
+    <%- include('partials/ad-slot', { slotId: 'mobile-inline' }) %>
+  </aside>
+</div>
+
+<%- include('partials/footer') %>

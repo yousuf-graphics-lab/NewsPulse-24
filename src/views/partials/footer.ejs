@@ -1,0 +1,103 @@
+<%# Footer: navigation, newsletter, social, disclosure, legal. %>
+<%- include('./ad-slot', { slotId: 'footer-banner' }) %>
+
+<section class="newsletter" id="newsletter">
+  <div>
+    <h3><%= locale === 'en' ? 'Get the morning digest' : 'প্রতিদিনের সংবাদ সারসংক্ষেপ' %></h3>
+    <p><%= locale === 'en'
+      ? 'The day’s most important stories, in your inbox every morning. No spam, unsubscribe anytime.'
+      : 'দিনের গুরুত্বপূর্ণ খবরগুলো প্রতিদিন সকালে আপনার ইনবক্সে। স্প্যাম নেই, যেকোনো সময় আনসাবস্ক্রাইব করুন।' %></p>
+  </div>
+  <% if (site.newsletter_enabled === '1') { %>
+  <form id="newsletterForm" novalidate>
+    <label class="sr-only" for="nlEmail"><%= locale === 'en' ? 'Email address' : 'ইমেইল' %></label>
+    <input id="nlEmail" type="email" name="email" required placeholder="<%= locale === 'en' ? 'your@email.com' : 'আপনার ইমেইল' %>" autocomplete="email">
+    <button class="btn" type="submit"><%= locale === 'en' ? 'Subscribe' : 'সাবস্ক্রাইব' %></button>
+  </form>
+  <% } else { %>
+  <p class="muted small"><%= locale === 'en' ? 'Newsletter is currently disabled.' : 'নিউজলেটার আপাতত বন্ধ আছে।' %></p>
+  <% } %>
+</section>
+<div id="newsletterResult" role="status" aria-live="polite"></div>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__grid">
+      <div class="footer__about">
+        <a class="brand" href="/" style="margin-bottom:12px">
+          <span class="brand__mark">NP24</span>
+          <span class="brand__text">
+            <span class="brand__name">News<span>Pulse</span> 24</span>
+            <span class="brand__sub"><%= site.site_name_en %></span>
+          </span>
+        </a>
+        <p><%= locale === 'en' ? site.footer_about_en : site.footer_about_bn %></p>
+        <div class="socials">
+          <% if (site.facebook_url) { %><a href="<%= h.safeUrl(site.facebook_url) %>" rel="noopener" aria-label="Facebook" target="_blank">f</a><% } %>
+          <% if (site.twitter_url) { %><a href="<%= h.safeUrl(site.twitter_url) %>" rel="noopener" aria-label="X" target="_blank">𝕏</a><% } %>
+          <% if (site.youtube_url) { %><a href="<%= h.safeUrl(site.youtube_url) %>" rel="noopener" aria-label="YouTube" target="_blank">▶</a><% } %>
+          <% if (site.instagram_url) { %><a href="<%= h.safeUrl(site.instagram_url) %>" rel="noopener" aria-label="Instagram" target="_blank">◎</a><% } %>
+          <a href="/feed.xml" aria-label="RSS">≡</a>
+        </div>
+      </div>
+
+      <div>
+        <h4><%= locale === 'en' ? 'Categories' : 'বিভাগ' %></h4>
+        <ul>
+          <% categories.slice(0, 8).forEach(function (c) { %>
+            <li><a href="/category/<%= c.slug %>"><%= locale === 'en' ? c.name_en : c.name_bn %></a></li>
+          <% }); %>
+        </ul>
+      </div>
+
+      <div>
+        <h4><%= locale === 'en' ? 'NewsPulse 24' : 'নিউজপালস ২৪' %></h4>
+        <ul>
+          <li><a href="/page/about"><%= locale === 'en' ? 'About us' : 'আমাদের সম্পর্কে' %></a></li>
+          <li><a href="/page/editorial-policy"><%= locale === 'en' ? 'Editorial policy' : 'সম্পাদকীয় নীতি' %></a></li>
+          <li><a href="/corrections"><%= locale === 'en' ? 'Corrections' : 'সংশোধনী' %></a></li>
+          <li><a href="/page/privacy-policy"><%= locale === 'en' ? 'Privacy policy' : 'গোপনীয়তা নীতি' %></a></li>
+          <li><a href="/page/terms"><%= locale === 'en' ? 'Terms of use' : 'ব্যবহারের শর্ত' %></a></li>
+          <li><a href="/advertise"><%= locale === 'en' ? 'Advertise' : 'বিজ্ঞাপন' %></a></li>
+          <li><a href="/page/contact"><%= locale === 'en' ? 'Contact' : 'যোগাযোগ' %></a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4><%= locale === 'en' ? 'Reach the newsroom' : 'সংবাদ কক্ষ' %></h4>
+        <ul>
+          <li><a href="mailto:<%= site.contact_email %>"><%= site.contact_email %></a></li>
+          <li><a href="tel:<%= site.contact_phone.replace(/\s/g, '') %>"><%= site.contact_phone %></a></li>
+          <li class="small" style="color:#8b8d97"><%= site.address %></li>
+        </ul>
+        <p class="small" style="margin-top:12px;color:#8b8d97">
+          <%= locale === 'en' ? 'Found an error? Tell us — we publish every correction.' : 'ভুল পেলে জানান — আমরা প্রতিটি সংশোধন প্রকাশ করি।' %>
+          <a href="mailto:corrections@newspulse24.com" style="color:#ff8a95">corrections@newspulse24.com</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>© <%= currentYear %> <%= site.site_name_en %> — <%= locale === 'en' ? 'All rights reserved.' : 'সর্বস্বত্ব সংরক্ষিত।' %></span>
+      <span>
+        <%= locale === 'en' ? 'Built for speed, security and accountability.' : 'দ্রুততা, নিরাপত্তা ও জবাবদিহিতার জন্য নির্মিত।' %>
+        · <a href="/sitemap.xml">Sitemap</a> · <a href="/feed.xml">RSS</a>
+        <% if (!user) { %> · <a href="/admin"><%= locale === 'en' ? 'Admin' : 'অ্যাডমিন' %></a><% } %>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" data-show="false" aria-label="<%= locale === 'en' ? 'Back to top' : 'উপরে যান' %>">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+</button>
+
+<%- include('./assistant') %>
+
+<%# Mobile sticky ad — outside the footer flow so it stays pinned. %>
+<%- include('./ad-slot', { slotId: 'mobile-banner' }) %>
+
+<script src="/assets/js/site.js?v=1.0.0" defer></script>
+<script src="/assets/js/assistant.js?v=1.0.0" defer></script>
+</body>
+</html>

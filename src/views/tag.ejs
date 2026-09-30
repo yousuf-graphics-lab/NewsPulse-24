@@ -1,0 +1,22 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<div class="wrap layout">
+  <main id="main">
+    <div class="static-page" style="padding:22px 24px;margin-bottom:18px">
+      <h1 style="font-size:24px">#<%= tag %></h1>
+      <p class="muted" style="margin:0"><%= locale === 'en' ? h.bnNumber(articles.length) + ' stories tagged' : h.bnNumber(articles.length) + 'টি সংবাদ' %></p>
+    </div>
+    <div class="grid grid--3">
+      <% articles.forEach(function (a) { %>
+        <%- include('partials/article-card', { a: a }) %>
+      <% }); %>
+    </div>
+  </main>
+  <aside class="sidebar">
+    <%- include('partials/ad-slot', { slotId: 'sidebar-top' }) %>
+    <%- include('partials/ad-slot', { slotId: 'sidebar-sticky' }) %>
+  </aside>
+</div>
+
+<%- include('partials/footer') %>

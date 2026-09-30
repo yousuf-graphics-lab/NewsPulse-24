@@ -1,0 +1,46 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<div class="wrap layout layout--full">
+  <main id="main" style="max-width:900px;margin:0 auto;width:100%">
+    <article class="static-page">
+      <h1 style="font-size:29px"><%= locale === 'en' ? 'Corrections & clarifications' : 'সংশোধনী ও স্পষ্টীকরণ' %></h1>
+      <p>
+        <%= locale === 'en'
+          ? 'NewsPulse 24 corrects errors openly. When we change a story we say what changed, when, and we keep the record here. We never quietly rewrite a published article.'
+          : 'নিউজপালস ২৪ ভুল প্রকাশ্যে সংশোধন করে। কোনো সংবাদ বদলালে আমরা বলি কী বদলেছে, কখন বদলেছে, এবং সেই রেকর্ড এখানে সংরক্ষিত থাকে। প্রকাশিত সংবাদ চুপচাপ বদলানো হয় না।' %>
+      </p>
+
+      <% if (!corrections.length) { %>
+        <div class="correction-box" style="background:var(--paper-2);border-color:var(--line)">
+          <b><%= locale === 'en' ? 'No corrections on record.' : 'কোনো সংশোধনী নেই।' %></b>
+          <p style="margin:6px 0 0"><%= locale === 'en' ? 'When a story is corrected it will appear here automatically.' : 'কোনো সংবাদ সংশোধন হলে তা স্বয়ংক্রিয়ভাবে এখানে দেখা যাবে।' %></p>
+        </div>
+      <% } else { %>
+        <ul style="list-style:none;padding:0;margin:20px 0 0">
+          <% corrections.forEach(function (c) { %>
+            <li style="border-left:4px solid var(--red);padding:12px 16px;margin-bottom:14px;background:var(--paper-2);border-radius:0 8px 8px 0">
+              <div class="row between">
+                <span class="badge-cat"><%= c.kind %></span>
+                <span class="muted small"><%= c.dateLabel %><% if (c.editor) { %> · <%= c.editor %><% } %></span>
+              </div>
+              <p style="margin:10px 0 6px"><%= c.note %></p>
+              <p class="small muted" style="margin:0"><%= locale === 'en' ? 'Story' : 'সংবাদ' %>: <a href="<%= c.url %>" style="color:var(--red-700)"><%= c.title %></a></p>
+            </li>
+          <% }); %>
+        </ul>
+      <% } %>
+
+      <div class="correction-box" style="margin-top:26px">
+        <b><%= locale === 'en' ? 'Report an error' : 'ভুল জানান' %></b>
+        <p style="margin:6px 0 0">
+          <%= locale === 'en' ? 'Email ' : 'ইমেইল করুন ' %><a href="mailto:corrections@newspulse24.com">corrections@newspulse24.com</a>
+          <%= locale === 'en' ? ' with the story link and what is wrong. We verify every report and reply.' : ' — সংবাদের লিংক ও ভুলটি উল্লেখ করুন। আমরা প্রতিটি অভিযোগ যাচাই করে উত্তর দিই।' %>
+        </p>
+        <p class="small muted" style="margin:8px 0 0"><a href="/page/editorial-policy"><%= locale === 'en' ? 'Read the full editorial & corrections policy →' : 'সম্পূর্ণ সম্পাদকীয় ও সংশোধন নীতিমালা পড়ুন →' %></a></p>
+      </div>
+    </article>
+  </main>
+</div>
+
+<%- include('partials/footer') %>

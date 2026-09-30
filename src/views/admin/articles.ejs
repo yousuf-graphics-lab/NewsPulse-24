@@ -1,0 +1,82 @@
+<%- include('_shell-open') %>
+
+<div class="panel">
+  <div class="panel__head">
+    📰 <%= locale === 'en' ? 'All stories' : 'সব সংবাদ' %>
+    <span class="sub"><%= h.bnNumber(total) %> <%= locale === 'en' ? 'total' : 'টি' %></span>
+    <span class="spacer"></span>
+    <% if (can('article.create')) { %><a class="btn btn--sm" href="/admin/articles/new">+ <%= locale === 'en' ? 'New story' : 'নতুন সংবাদ' %></a><% } %>
+  </div>
+  <div class="panel__body">
+    <form method="get" class="row" style="gap:8px;margin-bottom:14px">
+      <input type="search" name="q" value="<%= q %>" placeholder="<%= locale === 'en' ? 'Search headline…' : 'শিরোনাম খুঁজুন…' %>" style="flex:1;padding:8px 11px;border:1px solid var(--line);border-radius:7px">
+      <select name="status" style="padding:8px 11px;border:1px solid var(--line);border-radius:7px">
+        <option value=""><%= locale === 'en' ? 'All statuses' : 'সব স্ট্যাটাস' %></option>
+        <% ['draft', 'pending', 'published', 'archived'].forEach(function (s) { %>
+          <option value="<%= s %>" <%= status === s ? 'selected' : '' %>><%= s %></option>
+        <% }); %>
+      </select>
+      <button class="btn btn--ghost btn--sm" type="submit"><%= locale === 'en' ? 'Filter' : 'ফিল্টার' %></button>
+      <% if (q || status) { %><a class="btn btn--ghost btn--sm" href="/admin/articles"><%= locale === 'en' ? 'Clear' : 'রিসেট' %></a><% } %>
+    </form>
+
+    <div class="row" style="gap:6px;margin-bottom:14px">
+      <% counts.forEach(function (c) { %>
+        <span class="tag tag--<%= c.status === 'published' ? 'ok' : c.status === 'draft' ? 'warn' : 'ink' %>"><%= c.status %>: <%= h.bnNumber(c.n) %></span>
+      <% }); %>
+    </div>
+
+    <div class="table-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th><%= locale === 'en' ? 'Story' : 'সংবাদ' %></th>
+            <th><%= locale === 'en' ? 'Category' : 'বিভাগ' %></th>
+            <th><%= locale === 'en' ? 'Status' : 'স্ট্যাটাস' %></th>
+            <th class="num"><%= locale === 'en' ? 'Views' : 'ভিউ' %></th>
+            <th class="num"><%= locale === 'en' ? 'Comments' : 'মন্তব্য' %></th>
+            <th><%= locale === 'en' ? 'Updated' : 'হালনাগাদ' %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% rows.forEach(function (a) { %>
+            <tr>
+              <td style="max-width:460px">
+                <a href="/admin/articles/<%= a.id %>/edit" style="font-weight:600"><%= a.title_bn %></a>
+                <div class="row" style="gap:5px;margin-top:4px">
+                  <% if (a.is_breaking) { %><span class="tag tag--red"><%= locale === 'en' ? 'breaking' : 'ব্রেকিং' %></span><% } %>
+                  <% if (a.is_featured) { %><span class="tag tag--warn">featured</span><% } %>
+                  <% if (a.is_sponsored) { %><span class="tag">sponsored</span><% } %>
+                  <% if (a.is_demo) { %><span class="tag tag--warn">demo</span><% } %>
+                  <a class="small muted" href="/news/<%= a.slug %>" target="_blank" rel="noopener">↗ /news/<%= a.slug.length > 30 ? a.slug.slice(0, 30) + '…' : a.slug %></a>
+                </div>
+              </td>
+              <td><span class="tag"><%= a.category_bn || '—' %></span></td>
+              <td>
+                <span class="tag tag--<%= a.status === 'published' ? 'ok' : a.status === 'draft' ? 'warn' : 'ink' %>"><%= a.status %></span>
+              </td>
+              <td class="num"><%= h.bnNumber(a.views) %></td>
+              <td class="num"><%= h.bnNumber(a.comments_count) %></td>
+              <td class="small muted"><%= h.timeAgo(a.updated_at, locale) %></td>
+              <td class="actions">
+                <a class="btn btn--ghost btn--sm" href="/admin/articles/<%= a.id %>/edit"><%= locale === 'en' ? 'Edit' : 'সম্পাদনা' %></a>
+                <% if (can('article.delete')) { %>
+                  <form method="post" action="/admin/articles/<%= a.id %>/delete" data-confirm="<%= locale === 'en' ? 'Delete this story permanently?' : 'সংবাদটি স্থায়ীভাবে মুছে ফেলবেন?' %>" style="display:inline">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn--danger btn--sm" type="submit">✕</button>
+                  </form>
+                <% } %>
+              </td>
+            </tr>
+          <% }); %>
+          <% if (!rows.length) { %><tr><td colspan="7" class="muted"><%= locale === 'en' ? 'Nothing here yet.' : 'এখনো কিছু নেই।' %></td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+
+    <%- include('../partials/pagination', { page: page, totalPages: totalPages, baseUrl: '/admin/articles?q=' + encodeURIComponent(q) + '&status=' + status }) %>
+  </div>
+</div>
+
+<%- include('_shell-close') %>
