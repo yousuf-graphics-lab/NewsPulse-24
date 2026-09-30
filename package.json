@@ -1,0 +1,35 @@
+{
+  "name": "newspulse-24",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NewsPulse 24 — a production-grade Bangladeshi news portal with breaking-news ticker, monetisation engine, analytics and a hardened admin panel.",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "type": "commonjs",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/server.js",
+    "db:init": "node --disable-warning=ExperimentalWarning scripts/db-init.js",
+    "db:seed": "node --disable-warning=ExperimentalWarning scripts/db-seed.js",
+    "admin:create": "node --disable-warning=ExperimentalWarning scripts/create-admin.js",
+    "backup": "node --disable-warning=ExperimentalWarning scripts/backup.js",
+    "test": "node --disable-warning=ExperimentalWarning --test \"tests/*.test.js\"",
+    "lint:deps": "npm audit --omit=dev"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.5",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "multer": "^2.0.1",
+    "sanitize-html": "^2.14.0",
+    "zod": "^3.24.1"
+  }
+}

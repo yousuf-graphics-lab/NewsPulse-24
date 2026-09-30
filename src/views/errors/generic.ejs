@@ -1,0 +1,32 @@
+<%# Error pages. In production the stack trace is never sent to the browser. %>
+<%- include('../partials/head', { pageTitle: title + ' — NewsPulse 24', noindex: true }) %>
+<div style="min-height:100vh;display:grid;place-items:center;padding:24px;background:var(--paper-2)">
+  <div style="max-width:560px;text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:38px 30px;box-shadow:var(--shadow-2)">
+    <div style="font-family:var(--font-en);font-size:74px;font-weight:800;color:var(--red);line-height:1"><%= status %></div>
+    <h1 style="font-size:24px;margin:12px 0 8px"><%= heading %></h1>
+    <p style="color:var(--text-2)"><%= message %></p>
+
+    <% if (status === 404) { %>
+      <p class="muted small" style="margin-bottom:18px">
+        <%= locale === 'en' ? 'Try the latest headlines instead:' : 'সর্বশেষ সংবাদ দেখতে পারেন:' %>
+      </p>
+    <% } %>
+
+    <div class="row" style="justify-content:center;gap:10px">
+      <a class="btn" href="/"><%= locale === 'en' ? 'Go home' : 'প্রচ্ছদে যান' %></a>
+      <a class="btn btn--ghost" href="/search"><%= locale === 'en' ? 'Search' : 'খুঁজুন' %></a>
+      <% if (status >= 500) { %>
+        <a class="btn btn--ghost" href="/healthz">Status</a>
+      <% } %>
+    </div>
+
+    <% if (stack) { %>
+      <details style="margin-top:22px;text-align:left">
+        <summary class="muted small" style="cursor:pointer">Developer detail (development only)</summary>
+        <pre style="background:var(--paper-2);padding:12px;border-radius:8px;overflow:auto;font-size:12px;line-height:1.5"><%= stack %></pre>
+      </details>
+    <% } %>
+  </div>
+</div>
+</body>
+</html>

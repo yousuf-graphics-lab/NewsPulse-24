@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>সাইন ইন · নিউজপালস ২৪ অ্যাডমিন</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@600;800&display=swap" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/assets/css/admin.css?v=1.0.0">
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.9 5.7 3.9 9S14.6 18.4 12 21c-2.6-2.6-3.9-5.7-3.9-9S9.4 5.6 12 3z"/></svg>
+      </span>
+      <span>
+        <h1>News<span style="color:var(--red)">Pulse</span> 24</h1>
+        <p class="sub">নিউজরুম কন্ট্রোল রুম · Admin</p>
+      </span>
+    </div>
+
+    <% if (typeof isDev !== 'undefined' && isDev) { %>
+    <div class="flash" style="background:#12211a;border:1px solid #1d4c31;color:#8ee3b0">
+      🧪 <b>Dev mode</b> — আইডি: <code>admin@newspulse24.com</code> · পাসওয়ার্ড: <code>NewsPulse#2026x</code>
+      <span class="muted" style="display:block;font-size:12px;margin-top:4px">প্রোডাকশনে এই বক্স দেখা যায় না; আপনার <code>.env</code>-এর মান ব্যবহার করুন।</span>
+    </div>
+    <% } %>
+
+    <% if (error) { %><div class="flash flash--err">⚠ <%= error %></div><% } %>
+
+    <form method="post" action="/admin/login" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="next" value="<%= next %>">
+      <div class="field">
+        <label for="email">ইমেইল</label>
+        <input id="email" name="email" type="email" required autocomplete="username" autofocus maxlength="160">
+      </div>
+      <div class="field">
+        <label for="password">পাসওয়ার্ড</label>
+        <input id="password" name="password" type="password" required autocomplete="current-password" maxlength="200">
+      </div>
+      <button class="btn" type="submit">সাইন ইন →</button>
+    </form>
+
+    <div class="security-note">
+      🛡️ এই লগইন ব্রুট-ফোর্স সুরক্ষিত: <b>৫টি</b> ব্যর্থ চেষ্টার পর অ্যাকাউন্ট ১৫ মিনিট লক হয়, সব চেষ্টা সিকিউরিটি লগে যায় এবং প্রতিটি সেশন হ্যাশ করা টোকেন দিয়ে যাচাই করা হয়।
+      <% if (typeof settings !== 'undefined' && settings.require2faForAdmins) { %><br>এই সাইটে অ্যাডমিনদের জন্য টু-ফ্যাক্টর বাধ্যতামূলক।<% } %>
+    </div>
+
+    <div class="foot"><a href="/" style="color:var(--red-700)">← ওয়েবসাইটে ফিরে যান</a></div>
+  </div>
+</div>
+</body>
+</html>

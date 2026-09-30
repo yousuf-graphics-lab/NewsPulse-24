@@ -1,0 +1,95 @@
+<%- include('_shell-open') %>
+
+<div class="cards">
+  <div class="stat"><span class="label"><%= locale === 'en' ? 'Active subscribers' : 'সক্রিয় সাবস্ক্রাইবার' %></span><span class="value"><%= h.bnNumber(stats.active) %></span></div>
+  <div class="stat alt"><span class="label"><%= locale === 'en' ? 'Pending confirmation' : 'নিশ্চিতকরণ বাকি' %></span><span class="value"><%= h.bnNumber(stats.pending) %></span></div>
+  <div class="stat alt"><span class="label"><%= locale === 'en' ? 'Unsubscribed' : 'আনসাবস্ক্রাইব' %></span><span class="value"><%= h.bnNumber(stats.unsubscribed) %></span></div>
+  <div class="stat alt"><span class="label"><%= locale === 'en' ? 'Campaigns' : 'ক্যাম্পেইন' %></span><span class="value"><%= h.bnNumber(stats.campaigns) %></span>
+    <span class="muted small"><%= stats.lastSent ? h.formatDate(stats.lastSent, locale) : (locale === 'en' ? 'never sent' : 'এখনো পাঠানো হয়নি') %></span>
+  </div>
+</div>
+
+<div class="grid-side">
+  <div>
+    <div class="panel">
+      <div class="panel__head">✉️ <%= locale === 'en' ? 'Create a campaign' : 'নতুন ক্যাম্পেইন' %></div>
+      <div class="panel__body">
+        <form method="post" action="/admin/newsletter/campaign">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="field"><label for="subject"><%= locale === 'en' ? 'Subject' : 'বিষয়' %></label><input id="subject" name="subject" required maxlength="200" value="<%= locale === 'en' ? 'Today at NewsPulse 24' : 'আজকের নিউজপালস ২৪' %>"></div>
+          <div class="field"><label for="preview"><%= locale === 'en' ? 'Preview text' : 'প্রিভিউ টেক্সট' %></label><input id="preview" name="preview" maxlength="300"></div>
+          <div class="field">
+            <label for="body"><%= locale === 'en' ? 'Body (HTML)' : 'বিষয়বস্তু (HTML)' %></label>
+            <textarea id="body" name="body" style="min-height:180px"></textarea>
+            <span class="hint"><%= locale === 'en' ? 'Use {{unsubscribe}} to insert the per-reader unsubscribe link.' : '{{unsubscribe}} লিখলে প্রতিটি পাঠকের আনসাবস্ক্রাইব লিংক বসবে।' %></span>
+          </div>
+          <div class="row">
+            <button class="btn" type="submit" name="send" value="0"><%= locale === 'en' ? 'Save as draft' : 'ড্রাফট সংরক্ষণ' %></button>
+            <button class="btn btn--ink" type="submit" name="send" value="1"><%= locale === 'en' ? 'Send to today’s digest' : 'আজকের ডাইজেস্ট পাঠান' %></button>
+          </div>
+          <p class="small muted" style="margin:10px 0 0">
+            <%= locale === 'en' ? 'Tip: leave the body empty and choose the digest option to send the day’s most-read stories automatically.' : 'টিপ: বডি খালি রেখে ডাইজেস্ট অপশন নিলে দিনের সর্বাধিক পঠিত সংবাদ স্বয়ংক্রিয়ভাবে যাবে।' %>
+          </p>
+        </form>
+        <button class="btn btn--ghost btn--sm" id="previewNewsletter" type="button" style="margin-top:10px"><%= locale === 'en' ? 'Preview the digest' : 'ডাইজেস্ট প্রিভিউ দেখুন' %></button>
+        <div id="newsletterPreview" hidden style="border:1px solid var(--line);border-radius:8px;padding:12px;margin-top:10px;background:#fff"><%- digestPreview %></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel__head">📤 <%= locale === 'en' ? 'Campaigns' : 'ক্যাম্পেইন' %></div>
+      <div class="panel__body tight table-wrap">
+        <table class="tbl">
+          <thead><tr><th><%= locale === 'en' ? 'Subject' : 'বিষয়' %></th><th><%= locale === 'en' ? 'Status' : 'স্ট্যাটাস' %></th><th class="num"><%= locale === 'en' ? 'Recipients' : 'প্রাপক' %></th><th><%= locale === 'en' ? 'Sent' : 'পাঠানো' %></th><th></th></tr></thead>
+          <tbody>
+            <% campaigns.forEach(function (c) { %>
+              <tr>
+                <td><%= c.subject %></td>
+                <td><span class="tag tag--<%= c.status === 'sent' ? 'ok' : 'warn' %>"><%= c.status %></span></td>
+                <td class="num"><%= h.bnNumber(c.recipients) %></td>
+                <td class="small muted"><%= c.sent_at ? h.formatDate(c.sent_at, locale) : '—' %></td>
+                <td class="actions">
+                  <% if (c.status !== 'sent') { %>
+                    <form method="post" action="/admin/newsletter/<%= c.id %>/send" style="display:inline">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button class="btn btn--sm" type="submit"><%= locale === 'en' ? 'Send' : 'পাঠান' %></button>
+                    </form>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+            <% if (!campaigns.length) { %><tr><td colspan="5" class="muted"><%= locale === 'en' ? 'No campaigns yet.' : 'এখনো কোনো ক্যাম্পেইন নেই।' %></td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <div class="panel__head">👥 <%= locale === 'en' ? 'Subscribers' : 'সাবস্ক্রাইবার' %></div>
+      <div class="panel__body tight table-wrap">
+        <table class="tbl">
+          <thead><tr><th><%= locale === 'en' ? 'Email' : 'ইমেইল' %></th><th><%= locale === 'en' ? 'Status' : 'স্ট্যাটাস' %></th><th></th></tr></thead>
+          <tbody>
+            <% subscribers.forEach(function (s) { %>
+              <tr>
+                <td class="small"><%= s.email %><br><span class="muted"><%= s.lang %> · <%= s.country || '—' %></span></td>
+                <td><span class="tag tag--<%= s.status === 'active' ? 'ok' : 'warn' %>"><%= s.status %></span></td>
+                <td>
+                  <form method="post" action="/admin/newsletter/<%= s.id %>/delete" data-confirm="<%= locale === 'en' ? 'Remove this subscriber?' : 'সাবস্ক্রাইবার মুছবেন?' %>" style="display:inline">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn--danger btn--sm" type="submit">✕</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+            <% if (!subscribers.length) { %><tr><td colspan="3" class="muted"><%= locale === 'en' ? 'No subscribers yet.' : 'এখনো কেউ সাবস্ক্রাইব করেনি।' %></td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('_shell-close') %>

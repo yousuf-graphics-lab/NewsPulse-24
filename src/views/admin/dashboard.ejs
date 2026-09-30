@@ -1,0 +1,201 @@
+<%- include('_shell-open') %>
+
+<div class="cards">
+  <div class="stat">
+    <span class="label"><%= locale === 'en' ? 'Pageviews' : 'পেজভিউ' %> (<%= h.bnNumber(days) %><%= locale === 'en' ? 'd' : 'দি' %>)</span>
+    <span class="value" id="statPageviews"><%= h.bnNumber(overview.pageviews) %></span>
+    <span class="delta <%= overview.pageviewsDelta >= 0 ? 'up' : 'down' %>"><%= overview.pageviewsDelta >= 0 ? '▲' : '▼' %> <%= Math.abs(overview.pageviewsDelta) %>% <%= locale === 'en' ? 'vs previous' : 'আগের তুলনায়' %></span>
+  </div>
+  <div class="stat">
+    <span class="label"><%= locale === 'en' ? 'Unique visitors' : 'ইউনিক ভিজিটর' %></span>
+    <span class="value" id="statVisitors"><%= h.bnNumber(overview.visitors) %></span>
+    <span class="delta <%= overview.visitorsDelta >= 0 ? 'up' : 'down' %>"><%= overview.visitorsDelta >= 0 ? '▲' : '▼' %> <%= Math.abs(overview.visitorsDelta) %>%</span>
+  </div>
+  <div class="stat alt">
+    <span class="label"><%= locale === 'en' ? 'Today' : 'আজ' %></span>
+    <span class="value"><%= h.bnNumber(overview.todayPageviews) %></span>
+    <span class="muted small"><%= h.bnNumber(overview.todayVisitors) %> <%= locale === 'en' ? 'visitors so far' : 'ভিজিটর' %></span>
+  </div>
+  <div class="stat">
+    <span class="label"><%= locale === 'en' ? 'Ad impressions' : 'বিজ্ঞাপন ইমপ্রেশন' %></span>
+    <span class="value"><%= h.bnNumber(overview.ads.impressions) %></span>
+    <span class="muted small">CTR <%= overview.ads.ctr.toFixed(2) %>% · <%= h.bnNumber(overview.ads.clicks) %> <%= locale === 'en' ? 'clicks' : 'ক্লিক' %></span>
+  </div>
+  <div class="stat alt">
+    <span class="label"><%= locale === 'en' ? 'Subscribers' : 'সাবস্ক্রাইবার' %></span>
+    <span class="value"><%= h.bnNumber(overview.subscribers.active) %></span>
+    <span class="muted small"><%= h.bnNumber(overview.subscribers.pending) %> <%= locale === 'en' ? 'pending' : 'পেন্ডিং' %></span>
+  </div>
+  <div class="stat alt">
+    <span class="label"><%= locale === 'en' ? 'Published stories' : 'প্রকাশিত সংবাদ' %></span>
+    <span class="value"><%= h.bnNumber(overview.content.published || 0) %></span>
+    <span class="muted small"><%= h.bnNumber(overview.content.drafts || 0) %> <%= locale === 'en' ? 'drafts' : 'ড্রাফট' %> · <%= h.bnNumber(overview.pendingComments) %> <%= locale === 'en' ? 'comments to review' : 'মন্তব্য অপেক্ষমাণ' %></span>
+  </div>
+  <div class="stat alt">
+    <span class="label"><%= locale === 'en' ? 'AI chats' : 'এআই চ্যাট' %></span>
+    <span class="value"><%= h.bnNumber(overview.assistant.total) %></span>
+    <span class="muted small"><%= locale === 'en' ? 'avg' : 'গড়' %> <%= h.bnNumber(overview.assistant.avgMs) %>ms</span>
+  </div>
+</div>
+
+<div class="grid-side">
+  <div>
+    <div class="panel">
+      <div class="panel__head">
+        📈 <%= locale === 'en' ? 'Traffic' : 'ট্রাফিক' %>
+        <span class="sub"><%= locale === 'en' ? 'last' : 'গত' %> <%= h.bnNumber(days) %> <%= locale === 'en' ? 'days' : 'দিন' %></span>
+        <span class="spacer"></span>
+        <a class="btn btn--ghost btn--sm" href="?days=7">৭</a>
+        <a class="btn btn--ghost btn--sm" href="?days=30">৩০</a>
+        <a class="btn btn--ghost btn--sm" href="?days=90">৯০</a>
+      </div>
+      <div class="panel__body">
+        <div class="chart" data-series='<%- JSON.stringify(timeSeries.map(function (r) { return { l: r.day.slice(5), v: r.pageviews }; })) %>'></div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel__head">🌍 <%= locale === 'en' ? 'Visitors by country' : 'দেশ অনুযায়ী ভিজিটর' %></div>
+        <div class="panel__body tight table-wrap">
+          <table class="tbl">
+            <thead><tr><th><%= locale === 'en' ? 'Country' : 'দেশ' %></th><th class="num"><%= locale === 'en' ? 'Views' : 'ভিউ' %></th><th class="num"><%= locale === 'en' ? 'Visitors' : 'ভিজিটর' %></th></tr></thead>
+            <tbody>
+              <% if (!countries.length) { %><tr><td colspan="3" class="muted"><%= locale === 'en' ? 'No data yet.' : 'এখনো তথ্য নেই।' %></td></tr><% } %>
+              <% countries.forEach(function (c) { %>
+                <tr>
+                  <td><%= c.country === 'local' ? (locale === 'en' ? 'Local network' : 'লোকাল নেটওয়ার্ক') : c.country %></td>
+                  <td class="num"><%= h.bnNumber(c.pageviews) %></td>
+                  <td class="num"><%= h.bnNumber(c.visitors) %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">📱 <%= locale === 'en' ? 'Device & source' : 'ডিভাইস ও উৎস' %></div>
+        <div class="panel__body">
+          <div class="donut">
+            <% const devTotal = devices.reduce(function (s, d) { return s + d.pageviews; }, 0) || 1; %>
+            <% devices.forEach(function (d) { %>
+              <div class="row">
+                <span><%= d.device %></span>
+                <span class="track"><span class="fill" style="width:<%= Math.round((d.pageviews / devTotal) * 100) %>%;background:var(--ink)"></span></span>
+                <span class="val"><%= Math.round((d.pageviews / devTotal) * 100) %>%</span>
+              </div>
+            <% }); %>
+          </div>
+          <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
+          <div class="donut">
+            <% const srcTotal = sources.reduce(function (s, d) { return s + d.n; }, 0) || 1; %>
+            <% sources.slice(0, 6).forEach(function (d) { %>
+              <div class="row">
+                <span><%= d.source %></span>
+                <span class="track"><span class="fill" style="width:<%= Math.round((d.n / srcTotal) * 100) %>%"></span></span>
+                <span class="val"><%= h.bnNumber(d.n) %></span>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel__head">🏆 <%= locale === 'en' ? 'Top stories' : 'সর্বাধিক পঠিত সংবাদ' %></div>
+      <div class="panel__body tight table-wrap">
+        <table class="tbl">
+          <thead><tr><th><%= locale === 'en' ? 'Story' : 'সংবাদ' %></th><th><%= locale === 'en' ? 'Category' : 'বিভাগ' %></th><th class="num"><%= locale === 'en' ? 'Period' : 'সময়কাল' %></th><th class="num"><%= locale === 'en' ? 'Total' : 'মোট' %></th></tr></thead>
+          <tbody>
+            <% topArticles.slice(0, 10).forEach(function (a) { %>
+              <tr>
+                <td><a href="/news/<%= a.slug %>" target="_blank" rel="noopener"><%= a.title_bn.length > 62 ? a.title_bn.slice(0, 62) + '…' : a.title_bn %></a></td>
+                <td><span class="tag"><%= a.category_bn || '—' %></span></td>
+                <td class="num"><%= h.bnNumber(a.period_views) %></td>
+                <td class="num"><%= h.bnNumber(a.views) %></td>
+              </tr>
+            <% }); %>
+            <% if (!topArticles.length) { %><tr><td colspan="4" class="muted"><%= locale === 'en' ? 'No data yet.' : 'এখনো তথ্য নেই।' %></td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <div class="panel__head">🟢 <%= locale === 'en' ? 'Live now' : 'এখন লাইভ' %> <span class="sub" id="liveStamp"></span></div>
+      <div class="panel__body tight table-wrap">
+        <table class="tbl" id="liveNow" data-days="<%= days %>">
+          <thead><tr><th><%= locale === 'en' ? 'Page' : 'পেজ' %></th><th class="num"><%= locale === 'en' ? 'Hits' : 'হিট' %></th></tr></thead>
+          <tbody id="liveRows">
+            <% live.forEach(function (l) { %>
+              <tr><td><%= l.path %></td><td class="num"><%= h.bnNumber(l.hits) %></td></tr>
+            <% }); %>
+            <% if (!live.length) { %><tr><td colspan="2" class="muted"><%= locale === 'en' ? 'No visitors in the last 10 minutes.' : 'গত ১০ মিনিটে কোনো ভিজিটর নেই।' %></td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel__head">💰 <%= locale === 'en' ? 'Revenue snapshot' : 'আয়ের চিত্র' %></div>
+      <div class="panel__body">
+        <div class="donut">
+          <% const slotMax = Math.max.apply(null, overview.ads.bySlot.map(function (s) { return s.impressions; }).concat([1])) || 1; %>
+          <% overview.ads.bySlot.slice(0, 6).forEach(function (s) { %>
+            <div class="row">
+              <span style="font-size:12px"><%= s.slot %></span>
+              <span class="track"><span class="fill" style="width:<%= Math.round((s.impressions / slotMax) * 100) %>%"></span></span>
+              <span class="val"><%= h.bnNumber(s.impressions) %></span>
+            </div>
+          <% }); %>
+          <% if (!overview.ads.bySlot.length) { %><p class="muted small" style="margin:0"><%= locale === 'en' ? 'No ad events recorded yet.' : 'এখনো কোনো বিজ্ঞাপন ইভেন্ট নেই।' %></p><% } %>
+        </div>
+        <p class="small muted" style="margin:12px 0 0">
+          <%= locale === 'en' ? 'Estimated eCPM revenue depends on your network. Track impressions and CTR here, then reconcile with the network dashboard.' : 'প্রকৃত আয় নির্ভর করে আপনার নেটওয়ার্কের ওপর। এখানে ইমপ্রেশন ও CTR ট্র্যাক করুন, তারপর নেটওয়ার্ক ড্যাশবোর্ডের সঙ্গে মিলিয়ে নিন।' %>
+        </p>
+        <a class="btn btn--ghost btn--sm" href="/admin/ads" style="margin-top:10px"><%= locale === 'en' ? 'Manage ads' : 'বিজ্ঞাপন ব্যবস্থাপনা' %> →</a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel__head">💬 <%= locale === 'en' ? 'Comments awaiting review' : 'অপেক্ষমাণ মন্তব্য' %></div>
+      <div class="panel__body">
+        <% if (!commentsToReview.length) { %>
+          <p class="muted small" style="margin:0">✓ <%= locale === 'en' ? 'Nothing to review.' : 'কিছু নেই।' %></p>
+        <% } else { %>
+          <% commentsToReview.forEach(function (c) { %>
+            <div style="border-bottom:1px solid var(--line);padding:9px 0">
+              <b><%= c.name %></b> <span class="muted small">→ <%= c.title_bn.slice(0, 34) %>…</span>
+              <p class="small" style="margin:4px 0 0"><%= c.body.slice(0, 110) %>…</p>
+            </div>
+          <% }); %>
+          <a class="btn btn--sm" href="/admin/comments" style="margin-top:10px"><%= locale === 'en' ? 'Moderate' : 'পর্যালোচনা' %> →</a>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel__head">🧾 <%= locale === 'en' ? 'Recent activity' : 'সাম্প্রতিক কার্যক্রম' %></div>
+      <div class="panel__body tight table-wrap">
+        <table class="tbl">
+          <tbody>
+            <% audit.forEach(function (a) { %>
+              <tr>
+                <td>
+                  <span class="tag tag--ink"><%= a.action %></span>
+                  <div class="small muted"><%= a.actor %> · <%= h.timeAgo(a.created_at, locale) %></div>
+                </td>
+              </tr>
+            <% }); %>
+            <% if (!audit.length) { %><tr><td class="muted"><%= locale === 'en' ? 'No activity yet.' : 'এখনো কিছু নেই।' %></td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('_shell-close') %>

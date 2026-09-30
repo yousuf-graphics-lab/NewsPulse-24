@@ -1,0 +1,67 @@
+<%# -----------------------------------------------------------------------
+    AI assistant widget — bottom-right on every page.
+    The markup ships from the server so it works even if /api/assistant/config
+    is unreachable; JS only upgrades it with live suggestions and streaming.
+   ----------------------------------------------------------------------- %>
+<% const assistantOn = site.assistant_enabled === '1'; %>
+<% if (assistantOn) { %>
+<button class="ai-fab" id="aiFab" type="button" aria-label="<%= locale === 'en' ? 'Open AI assistant' : 'এআই অ্যাসিস্ট খুলুন' %>" aria-expanded="false" aria-controls="aiPanel">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/>
+    <path d="M18.5 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/>
+    <path d="M5 16l.6 1.5L7 18l-1.4.5L5 20l-.6-1.5L3 18l1.4-.5z"/>
+  </svg>
+  <span class="ai-fab__badge" aria-hidden="true">AI</span>
+</button>
+
+<div class="ai-panel" id="aiPanel" data-open="false" role="dialog" aria-modal="false"
+     aria-label="<%= locale === 'en' ? 'NewsPulse AI assistant' : 'নিউজপালস এআই অ্যাসিস্ট' %>"
+     data-greeting="<%= locale === 'en' ? site.assistant_greeting_en : site.assistant_greeting_bn %>">
+
+  <div class="ai-panel__head">
+    <span class="avatar" aria-hidden="true">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9z"/></svg>
+    </span>
+    <div>
+      <b><%= locale === 'en' ? 'NewsPulse Assistant' : 'নিউজপালস অ্যাসিস্ট' %></b>
+      <small><i></i> <%= locale === 'en' ? 'Online · বাংলা / English / Banglish' : 'অনলাইন · বাংলা / English / Banglish' %></small>
+    </div>
+    <div class="actions">
+      <button type="button" data-clear title="<%= locale === 'en' ? 'Clear chat' : 'চ্যাট মুছুন' %>" aria-label="<%= locale === 'en' ? 'Clear chat' : 'চ্যাট মুছুন' %>">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+      </button>
+      <button type="button" data-close title="<%= locale === 'en' ? 'Close' : 'বন্ধ' %>" aria-label="<%= locale === 'en' ? 'Close' : 'বন্ধ' %>">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="ai-panel__body" role="log" aria-live="polite"></div>
+
+  <div class="ai-chips">
+    <% if (locale === 'en') { %>
+      <button type="button">What is trending today?</button>
+      <button type="button">Latest cricket news</button>
+      <button type="button">Top 5 stories right now</button>
+      <button type="button">ajker khobor ki?</button>
+    <% } else { %>
+      <button type="button">আজ কী ট্রেন্ডিং?</button>
+      <button type="button">সর্বশেষ ক্রিকেট খবর</button>
+      <button type="button">এখনকার সেরা ৫টি সংবাদ</button>
+      <button type="button">ajker khobor ki?</button>
+    <% } %>
+  </div>
+
+  <div class="ai-panel__foot">
+    <form>
+      <label class="sr-only" for="aiInput"><%= locale === 'en' ? 'Ask the assistant' : 'অ্যাসিস্টকে প্রশ্ন করুন' %></label>
+      <textarea id="aiInput" rows="1" maxlength="2000"
+        placeholder="<%= locale === 'en' ? 'Ask in বাংলা, English or Banglish…' : 'বাংলা, English বা Banglish-এ প্রশ্ন করুন…' %>"></textarea>
+      <button type="submit" aria-label="<%= locale === 'en' ? 'Send' : 'পাঠান' %>">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l16-8-6 8 6 8z"/></svg>
+      </button>
+    </form>
+    <div class="ai-panel__lang"><%= locale === 'en' ? 'Answers come from the newsroom data — never invented.' : 'উত্তর সংবাদকক্ষের তথ্য থেকে আসে — কল্পনা করে নয়।' %></div>
+  </div>
+</div>
+<% } %>

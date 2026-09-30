@@ -1,0 +1,57 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<div class="wrap layout layout--full">
+  <main id="main" style="max-width:900px;margin:0 auto;width:100%">
+    <article class="static-page">
+      <h1 style="font-size:30px"><%= locale === 'en' ? 'Advertise with NewsPulse 24' : 'নিউজপালস ২৪-এ বিজ্ঞাপন দিন' %></h1>
+      <p style="font-size:18px;color:var(--text-2)">
+        <%= locale === 'en'
+          ? 'Reach readers across Bangladesh and the diaspora with clean, viewable placements — never intrusive, always clearly labelled.'
+          : 'বাংলাদেশ ও প্রবাসে ছড়িয়ে থাকা পাঠকদের কাছে পৌঁছান পরিষ্কার ও দৃশ্যমান স্লটে — কখনোই বিরক্তিকর নয়, সবসময় স্পষ্টভাবে চিহ্নিত।' %>
+      </p>
+
+      <h2><%= locale === 'en' ? 'Available inventory' : 'উপলব্ধ স্লট' %></h2>
+      <table class="slot-table">
+        <thead><tr>
+          <th><%= locale === 'en' ? 'Slot' : 'স্লট' %></th>
+          <th><%= locale === 'en' ? 'Placement' : 'অবস্থান' %></th>
+          <th><%= locale === 'en' ? 'Devices' : 'ডিভাইস' %></th>
+        </tr></thead>
+        <tbody>
+          <% slots.forEach(function (s) { %>
+            <tr>
+              <td><code><%= s.id %></code></td>
+              <td><%= s.label %></td>
+              <td><%= s.group === 'all' ? (locale === 'en' ? 'All' : 'সব') : s.group %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+
+      <h2><%= locale === 'en' ? 'What we offer' : 'আমরা যা দিই' %></h2>
+      <ul>
+        <li><%= locale === 'en' ? 'Direct-sold display, native sponsored cards and video placements.' : 'ডিসপ্লে, নেটিভ স্পনসরড কার্ড ও ভিডিও প্লেসমেন্ট।' %></li>
+        <li><%= locale === 'en' ? 'Targeting by device, country and news category.' : 'ডিভাইস, দেশ ও বিভাগ অনুযায়ী টার্গেটিং।' %></li>
+        <li><%= locale === 'en' ? 'Full impression, click and CTR reporting in the dashboard.' : 'ইমপ্রেশন, ক্লিক ও CTR-এর পূর্ণ রিপোর্ট।' %></li>
+        <li><%= locale === 'en' ? 'Every creative is labelled “Advertisement” — we do not disguise ads as news.' : 'প্রতিটি বিজ্ঞাপনে “বিজ্ঞাপন” লেখা থাকে — বিজ্ঞাপনকে সংবাদ সাজানো হয় না।' %></li>
+        <li><%= locale === 'en' ? 'Third-party scripts run in a sandboxed frame, so they cannot touch reader data.' : 'থার্ড-পার্টি স্ক্রিপ্ট স্যান্ডবক্সড ফ্রেমে চলে, পাঠকের তথ্যে প্রবেশ করতে পারে না।' %></li>
+      </ul>
+
+      <h2><%= locale === 'en' ? 'Get in touch' : 'যোগাযোগ' %></h2>
+      <p>
+        <a class="btn" href="mailto:<%= site.contact_email %>?subject=Advertising%20enquiry">
+          📧 <%= site.contact_email %>
+        </a>
+        <a class="btn btn--ghost" href="tel:<%= site.contact_phone.replace(/\s/g, '') %>">📞 <%= site.contact_phone %></a>
+      </p>
+      <p class="muted small">
+        <%= locale === 'en'
+          ? 'Programmatic buyers: our ads.txt is published at /ads.txt. Editorial staff never see advertiser data and advertisers never influence coverage.'
+          : 'প্রোগ্রাম্যাটিক ক্রেতারা: আমাদের ads.txt আছে /ads.txt ঠিকানায়। সম্পাদকীয় টিম বিজ্ঞাপনদাতার তথ্য দেখে না এবং বিজ্ঞাপনদাতা সংবাদে হস্তক্ষেপ করতে পারে না।' %>
+      </p>
+    </article>
+  </main>
+</div>
+
+<%- include('partials/footer') %>

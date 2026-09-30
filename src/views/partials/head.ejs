@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="<%= locale === 'en' ? 'en' : 'bn' %>" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title><%= typeof pageTitle !== 'undefined' && pageTitle ? pageTitle : site.site_name_bn %></title>
+  <meta name="description" content="<%= (typeof metaDescription !== 'undefined' && metaDescription) || site.tagline_bn %>">
+  <% if (typeof noindex !== 'undefined' && noindex) { %>
+  <meta name="robots" content="noindex, nofollow">
+  <% } else { %>
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <% } %>
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <meta name="theme-color" content="#e11d2e">
+  <meta name="color-scheme" content="light dark">
+  <meta name="author" content="<%= site.site_name_en %>">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <% if (typeof canonical !== 'undefined' && canonical) { %>
+  <link rel="canonical" href="<%= canonical.startsWith('http') ? canonical : publicUrl + canonical %>">
+  <% } %>
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:site_name" content="<%= site.site_name_en %>">
+  <meta property="og:type" content="<%= (typeof jsonLd !== 'undefined' && jsonLd && jsonLd['@type'] === 'NewsArticle') ? 'article' : 'website' %>">
+  <meta property="og:title" content="<%= typeof pageTitle !== 'undefined' && pageTitle ? pageTitle : site.site_name_bn %>">
+  <meta property="og:description" content="<%= (typeof metaDescription !== 'undefined' && metaDescription) || site.tagline_bn %>">
+  <meta property="og:url" content="<%= (typeof canonical !== 'undefined' && canonical) ? (canonical.startsWith('http') ? canonical : publicUrl + canonical) : publicUrl %>">
+  <meta property="og:locale" content="bn_BD">
+  <% if (typeof ogImage !== 'undefined' && ogImage) { %><meta property="og:image" content="<%= ogImage %>"><% } %>
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Performance: connect early, load fonts without blocking render -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@500;700;800&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@500;700;800&display=swap" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/assets/css/site.css?v=1.0.0">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/assets/icon-192.png">
+  <link rel="alternate" type="application/rss+xml" title="<%= site.site_name_en %>" href="/feed.xml">
+
+  <script nonce="<%= typeof cspNonce !== 'undefined' ? cspNonce : '' %>">
+    // Runs before first paint so there is no flash of the wrong theme.
+    (function () {
+      // The channel's house look is the dark newsroom theme; light is the opt-in.
+      var t = 'dark';
+      try { t = localStorage.getItem('np24-theme') || 'dark'; } catch (e) {}
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <% if (typeof jsonLd !== 'undefined' && jsonLd) { %>
+  <script type="application/ld+json" nonce="<%= typeof cspNonce !== 'undefined' ? cspNonce : '' %>"><%- JSON.stringify(jsonLd) %></script>
+  <% } %>
+  <script type="application/ld+json" nonce="<%= typeof cspNonce !== 'undefined' ? cspNonce : '' %>">
+  {"@context":"https://schema.org","@type":"NewsMediaOrganization","name":"<%= site.site_name_en %>",
+   "alternateName":"<%= site.site_name_bn %>","url":"<%= publicUrl %>",
+   "email":"<%= site.contact_email %>","address":"<%= site.address %>"}
+  </script>
+  <% if (site.ga_measurement_id) { %>
+  <!-- Analytics ID is present; wire the tag here. Kept out by default so the
+       site ships with zero third-party tracking. -->
+  <% } %>
+</head>
+<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+<a class="skip-link" href="#main"><%= locale === 'en' ? 'Skip to content' : 'মূল কনটেন্টে যান' %></a>
+<div class="progress" aria-hidden="true"></div>

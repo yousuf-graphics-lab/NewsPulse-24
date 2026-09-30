@@ -1,0 +1,63 @@
+<%- include('_shell-open') %>
+
+<div class="grid-side">
+  <div>
+    <div class="panel">
+      <div class="panel__head">📊 <%= locale === 'en' ? 'Polls' : 'পোল' %></div>
+      <div class="panel__body tight table-wrap">
+        <table class="tbl">
+          <thead><tr><th><%= locale === 'en' ? 'Question' : 'প্রশ্ন' %></th><th><%= locale === 'en' ? 'Results' : 'ফলাফল' %></th><th><%= locale === 'en' ? 'Status' : 'স্ট্যাটাস' %></th><th></th></tr></thead>
+          <tbody>
+            <% rows.forEach(function (p) { %>
+              <% const total = p.options.reduce(function (s, o) { return s + (o.votes || 0); }, 0) || 1; %>
+              <tr>
+                <td><b><%= p.question_bn %></b><% if (p.question_en) { %><div class="small muted"><%= p.question_en %></div><% } %></td>
+                <td style="min-width:260px">
+                  <% p.options.forEach(function (o) { %>
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                      <span style="flex:1;font-size:13px"><%= o.bn %></span>
+                      <span class="track" style="width:90px;height:7px;background:var(--paper-2);border-radius:99px;display:inline-block;overflow:hidden">
+                        <span style="display:block;height:100%;width:<%= Math.round(((o.votes || 0) / total) * 100) %>%;background:var(--red)"></span>
+                      </span>
+                      <span class="small muted" style="width:44px;text-align:right"><%= o.votes || 0 %> (<%= Math.round(((o.votes || 0) / total) * 100) %>%)</span>
+                    </div>
+                  <% }); %>
+                </td>
+                <td><span class="tag tag--<%= p.active ? 'ok' : 'warn' %>"><%= p.active ? (locale === 'en' ? 'active' : 'চালু') : (locale === 'en' ? 'closed' : 'বন্ধ') %></span></td>
+                <td>
+                  <form method="post" action="/admin/polls/<%= p.id %>/delete" data-confirm="<%= locale === 'en' ? 'Delete this poll and its votes?' : 'পোল ও ভোট মুছে ফেলবেন?' %>" style="display:inline">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn--danger btn--sm" type="submit">✕</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+            <% if (!rows.length) { %><tr><td colspan="4" class="muted"><%= locale === 'en' ? 'No polls yet.' : 'এখনো কোনো পোল নেই।' %></td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <div class="panel__head">➕ <%= locale === 'en' ? 'Create a poll' : 'নতুন পোল' %></div>
+      <div class="panel__body">
+        <form method="post" action="/admin/polls">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="field"><label for="question_bn"><%= locale === 'en' ? 'Question (বাংলা) *' : 'প্রশ্ন (বাংলা) *' %></label><input id="question_bn" name="question_bn" required maxlength="200"></div>
+          <div class="field"><label for="question_en"><%= locale === 'en' ? 'Question (English)' : 'প্রশ্ন (ইংরেজি)' %></label><input id="question_en" name="question_en" maxlength="200"></div>
+          <div class="field">
+            <label for="options"><%= locale === 'en' ? 'Options (one per line, 2–8)' : 'অপশন (প্রতি লাইনে একটি, ২–৮)' %></label>
+            <textarea id="options" name="options" required style="min-height:120px"></textarea>
+          </div>
+          <label class="check"><input type="checkbox" name="active" value="1" checked> <%= locale === 'en' ? 'Active' : 'সক্রিয়' %></label>
+          <button class="btn" type="submit"><%= locale === 'en' ? 'Create poll' : 'পোল তৈরি' %></button>
+          <p class="small muted" style="margin-top:10px"><%= locale === 'en' ? 'One vote per visitor, enforced server-side by visitor id.' : 'প্রতি ভিজিটরে একটি ভোট, সার্ভারে যাচাই করা হয়।' %></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('_shell-close') %>

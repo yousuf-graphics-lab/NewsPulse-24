@@ -1,0 +1,71 @@
+<%- include('_shell-open') %>
+
+<div class="grid-side">
+  <div>
+    <div class="panel">
+      <div class="panel__head">📄 <%= locale === 'en' ? 'Static pages' : 'স্ট্যাটিক পেজ' %></div>
+      <div class="panel__body tight table-wrap">
+        <table class="tbl">
+          <thead><tr><th><%= locale === 'en' ? 'Page' : 'পেজ' %></th><th>URL</th><th><%= locale === 'en' ? 'Updated' : 'হালনাগাদ' %></th><th></th></tr></thead>
+          <tbody>
+            <% rows.forEach(function (p) { %>
+              <tr>
+                <td><%= p.title_bn %></td>
+                <td><a href="/page/<%= p.slug %>" target="_blank" rel="noopener">/page/<%= p.slug %></a></td>
+                <td class="small muted"><%= h.timeAgo(p.updated_at, locale) %></td>
+                <td class="actions">
+                  <a class="btn btn--ghost btn--sm" href="?slug=<%= p.slug %>"><%= locale === 'en' ? 'Edit' : 'সম্পাদনা' %></a>
+                  <form method="post" action="/admin/pages/<%= p.slug %>/delete" data-confirm="<%= locale === 'en' ? 'Delete this page?' : 'পেজ মুছবেন?' %>" style="display:inline">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn--danger btn--sm" type="submit">✕</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel__head">✍️ <%= editing ? (locale === 'en' ? 'Edit page' : 'পেজ সম্পাদনা') : (locale === 'en' ? 'New page' : 'নতুন পেজ') %></div>
+      <div class="panel__body">
+        <form method="post" action="/admin/pages">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="field-row">
+            <div class="field"><label for="title_bn"><%= locale === 'en' ? 'Title (বাংলা) *' : 'শিরোনাম (বাংলা) *' %></label><input id="title_bn" name="title_bn" required maxlength="160" value="<%= editing ? editing.title_bn : '' %>"></div>
+            <div class="field"><label for="title_en"><%= locale === 'en' ? 'Title (English)' : 'শিরোনাম (ইংরেজি)' %></label><input id="title_en" name="title_en" maxlength="160" value="<%= editing ? (editing.title_en || '') : '' %>"></div>
+          </div>
+          <div class="field">
+            <label for="slug">Slug *</label>
+            <input id="slug" name="slug" required maxlength="80" value="<%= editing ? editing.slug : '' %>">
+            <span class="hint">/page/<span><%= editing ? editing.slug : 'slug' %></span></span>
+          </div>
+          <div class="field">
+            <label for="body_bn"><%= locale === 'en' ? 'Body (HTML, sanitised)' : 'মূল লেখা (HTML)' %></label>
+            <textarea id="body_bn" name="body_bn" style="min-height:260px"><%= editing ? editing.body_bn : '' %></textarea>
+          </div>
+          <button class="btn" type="submit"><%= locale === 'en' ? 'Save page' : 'পেজ সংরক্ষণ' %></button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <div class="panel__head">💡 <%= locale === 'en' ? 'Suggested pages' : 'প্রস্তাবিত পেজ' %></div>
+      <div class="panel__body small">
+        <ul style="margin:0;padding-left:18px;line-height:2">
+          <li><b>about</b> — <%= locale === 'en' ? 'who you are, ownership, funding' : 'পরিচয়, মালিকানা, অর্থায়ন' %></li>
+          <li><b>editorial-policy</b> — <%= locale === 'en' ? 'verification, corrections, ad separation' : 'যাচাই, সংশোধন, বিজ্ঞাপন বিভাজন' %></li>
+          <li><b>privacy-policy</b> — <%= locale === 'en' ? 'cookies, data, retention' : 'কুকি, তথ্য, সংরক্ষণ' %></li>
+          <li><b>terms</b> — <%= locale === 'en' ? 'reuse rights, comment rules' : 'পুনঃব্যবহার, মন্তব্যের নিয়ম' %></li>
+          <li><b>contact</b> — <%= locale === 'en' ? 'newsroom, tips, ads' : 'সংবাদ কক্ষ, টিপস, বিজ্ঞাপন' %></li>
+        </ul>
+        <p class="muted" style="margin-top:12px"><%= locale === 'en' ? 'All five ship with the install and can be rewritten here.' : 'এই পাঁচটি ইনস্টলের সঙ্গে আসে, এখান থেকে বদলানো যাবে।' %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('_shell-close') %>

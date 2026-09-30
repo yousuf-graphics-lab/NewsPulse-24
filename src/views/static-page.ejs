@@ -1,0 +1,17 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+
+<div class="wrap layout layout--full">
+  <main id="main" style="max-width:860px;margin:0 auto;width:100%">
+    <article class="static-page">
+      <nav class="article__crumb" aria-label="Breadcrumb">
+        <a href="/"><%= locale === 'en' ? 'Home' : 'প্রচ্ছদ' %></a> › <span><%= page.title %></span>
+      </nav>
+      <h1 style="font-size:30px;margin-bottom:18px"><%= page.title %></h1>
+      <div class="article__body"><%- page.body %></div>
+      <p class="muted small" style="margin-top:24px"><%= locale === 'en' ? 'Last updated' : 'সর্বশেষ হালনাগাদ' %>: <%= h.formatDate(page.updated_at, locale) %></p>
+    </article>
+  </main>
+</div>
+
+<%- include('partials/footer') %>

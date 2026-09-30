@@ -1,0 +1,78 @@
+<%- include('_shell-open') %>
+
+<div class="grid-side">
+  <div>
+    <div class="panel">
+      <div class="panel__head">⚡ <%= locale === 'en' ? 'Ticker items (in priority order)' : 'টিকার আইটেম (অগ্রাধিকার অনুযায়ী)' %></div>
+      <div class="panel__body tight table-wrap">
+        <table class="tbl">
+          <thead><tr><th>#</th><th><%= locale === 'en' ? 'Headline' : 'শিরোনাম' %></th><th><%= locale === 'en' ? 'Linked story' : 'সংযুক্ত সংবাদ' %></th><th><%= locale === 'en' ? 'Active' : 'সক্রিয়' %></th><th></th></tr></thead>
+          <tbody>
+            <% rows.forEach(function (t) { %>
+              <tr>
+                <td class="num"><%= t.priority %></td>
+                <td><%= t.text_bn %><% if (t.text_en) { %><div class="small muted"><%= t.text_en %></div><% } %></td>
+                <td class="small"><% if (t.slug) { %><a href="/news/<%= t.slug %>" target="_blank" rel="noopener"><%= (t.article_title || '').slice(0, 34) %>…</a><% } else { %>—<% } %></td>
+                <td><span class="tag tag--<%= t.active ? 'ok' : 'warn' %>"><%= t.active ? (locale === 'en' ? 'live' : 'চালু') : (locale === 'en' ? 'off' : 'বন্ধ') %></span></td>
+                <td class="actions">
+                  <form method="post" action="/admin/ticker/<%= t.id %>/toggle" style="display:inline">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn--ghost btn--sm" type="submit"><%= t.active ? '⏸' : '▶' %></button>
+                  </form>
+                  <form method="post" action="/admin/ticker/<%= t.id %>/delete" data-confirm="<%= locale === 'en' ? 'Remove from ticker?' : 'টিকার থেকে সরাবেন?' %>" style="display:inline">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="btn btn--danger btn--sm" type="submit">✕</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+            <% if (!rows.length) { %><tr><td colspan="5" class="muted"><%= locale === 'en' ? 'Ticker is empty — it will fall back to stories flagged “breaking”.' : 'টিকার খালি — “ব্রেকিং” চিহ্নিত সংবাদ দেখানো হবে।' %></td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel__head">➕ <%= locale === 'en' ? 'Add to ticker' : 'টিকারে যোগ' %></div>
+      <div class="panel__body">
+        <form method="post" action="/admin/ticker">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="field"><label for="text_bn"><%= locale === 'en' ? 'Headline (বাংলা) *' : 'শিরোনাম (বাংলা) *' %></label><input id="text_bn" name="text_bn" required maxlength="200"></div>
+          <div class="field"><label for="text_en"><%= locale === 'en' ? 'Headline (English)' : 'শিরোনাম (ইংরেজি)' %></label><input id="text_en" name="text_en" maxlength="200"></div>
+          <div class="field-row-3">
+            <div class="field"><label for="article_id"><%= locale === 'en' ? 'Link to story' : 'সংবাদ লিংক' %></label>
+              <select id="article_id" name="article_id">
+                <option value="">— <%= locale === 'en' ? 'none' : 'কিছু না' %> —</option>
+                <% breaking.forEach(function (b) { %>
+                  <option value="<%= b.id %>"><%= b.title_bn.slice(0, 50) %></option>
+                <% }); %>
+              </select>
+            </div>
+            <div class="field"><label for="priority"><%= locale === 'en' ? 'Priority' : 'অগ্রাধিকার' %></label><input id="priority" name="priority" type="number" min="1" max="999" value="50"></div>
+            <div class="field"><label for="ends_at"><%= locale === 'en' ? 'Expires (UTC)' : 'মেয়াদ শেষ' %></label><input id="ends_at" name="ends_at" placeholder="2026-01-01T00:00:00Z"></div>
+          </div>
+          <label class="check"><input type="checkbox" name="active" value="1" checked> <%= locale === 'en' ? 'Show immediately' : 'এখনই দেখান' %></label>
+          <button class="btn" type="submit"><%= locale === 'en' ? 'Add to ticker' : 'টিকারে যোগ করুন' %></button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <div class="panel__head">🔴 <%= locale === 'en' ? 'Stories flagged breaking' : 'ব্রেকিং চিহ্নিত সংবাদ' %></div>
+      <div class="panel__body small">
+        <% if (!breaking.length) { %><p class="muted" style="margin:0"><%= locale === 'en' ? 'None right now.' : 'এখন কোনোটি নেই।' %></p><% } %>
+        <% breaking.forEach(function (b) { %>
+          <div style="border-bottom:1px solid var(--line);padding:8px 0">
+            <a href="/news/<%= b.slug %>" target="_blank" rel="noopener"><%= b.title_bn %></a>
+            <div class="muted"><%= h.timeAgo(b.published_at, locale) %></div>
+          </div>
+        <% }); %>
+        <p class="muted" style="margin-top:12px"><%= locale === 'en' ? 'If the ticker has no manual items it automatically shows these.' : 'টিকারে ম্যানুয়াল আইটেম না থাকলে এগুলো স্বয়ংক্রিয়ভাবে দেখানো হয়।' %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('_shell-close') %>

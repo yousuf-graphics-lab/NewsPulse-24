@@ -1,0 +1,133 @@
+<%- include('_shell-open') %>
+<% const v = ad || {}; const val = function (k, d) { return v[k] !== undefined && v[k] !== null ? v[k] : (d === undefined ? '' : d); }; %>
+<% const action = ad ? '/admin/ads/' + ad.id : '/admin/ads'; %>
+
+<form method="post" action="<%= action %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <div class="grid-side">
+    <div>
+      <div class="panel">
+        <div class="panel__head">💰 <%= locale === 'en' ? 'Creative' : 'ক্রিয়েটিভ' %></div>
+        <div class="panel__body">
+          <div class="field-row">
+            <div class="field"><label for="name"><%= locale === 'en' ? 'Campaign name *' : 'ক্যাম্পেইনের নাম *' %></label><input id="name" name="name" required maxlength="120" value="<%= val('name') %>"></div>
+            <div class="field"><label for="advertiser"><%= locale === 'en' ? 'Advertiser' : 'বিজ্ঞাপনদাতা' %></label><input id="advertiser" name="advertiser" maxlength="120" value="<%= val('advertiser') %>"></div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="slot"><%= locale === 'en' ? 'Slot *' : 'স্লট *' %></label>
+              <select id="slot" name="slot" required>
+                <% adSlots.forEach(function (s) { %>
+                  <option value="<%= s.id %>" <%= val('slot') === s.id ? 'selected' : '' %>><%= s.id %> — <%= s.label %></option>
+                <% }); %>
+              </select>
+            </div>
+            <div class="field">
+              <label for="kind"><%= locale === 'en' ? 'Type *' : 'টাইপ *' %></label>
+              <select id="kind" name="kind">
+                <% ['text', 'image', 'html', 'script', 'video'].forEach(function (k) { %>
+                  <option value="<%= k %>" <%= val('kind', 'text') === k ? 'selected' : '' %>><%= k %></option>
+                <% }); %>
+              </select>
+            </div>
+          </div>
+
+          <fieldset>
+            <legend><%= locale === 'en' ? 'Text / house ad' : 'টেক্সট / হাউজ অ্যাড' %></legend>
+            <div class="field"><label for="headline"><%= locale === 'en' ? 'Headline' : 'শিরোনাম' %></label><input id="headline" name="headline" maxlength="120" value="<%= val('headline') %>"></div>
+            <div class="field"><label for="body"><%= locale === 'en' ? 'Body' : 'বিবরণ' %></label><textarea id="body" name="body" maxlength="500" style="min-height:70px"><%= val('body') %></textarea></div>
+            <div class="field-row">
+              <div class="field"><label for="cta"><%= locale === 'en' ? 'Button text' : 'বাটনের লেখা' %></label><input id="cta" name="cta" maxlength="40" value="<%= val('cta') %>"></div>
+              <div class="field"><label for="link_url"><%= locale === 'en' ? 'Destination URL' : 'গন্তব্য লিংক' %></label><input id="link_url" name="link_url" maxlength="600" value="<%= val('link_url') %>"></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend><%= locale === 'en' ? 'Image / video' : 'ছবি / ভিডিও' %></legend>
+            <div class="field-row">
+              <div class="field"><label for="image_url"><%= locale === 'en' ? 'Image URL' : 'ছবির লিংক' %></label><input id="image_url" name="image_url" maxlength="600" value="<%= val('image_url') %>"></div>
+              <div class="field"><label for="video_url"><%= locale === 'en' ? 'Video URL' : 'ভিডিও লিংক' %></label><input id="video_url" name="video_url" maxlength="600" value="<%= val('video_url') %>"></div>
+            </div>
+            <% if (recentMedia.length) { %>
+              <details><summary class="small muted" style="cursor:pointer"><%= locale === 'en' ? 'Pick from media library' : 'মিডিয়া লাইব্রেরি থেকে বাছুন' %></summary>
+                <div class="media-grid" style="margin-top:10px">
+                  <% recentMedia.forEach(function (m) { %>
+                    <div class="media-item"><img src="<%= m.url %>" alt="" loading="lazy"><div class="meta"><code data-copy="<%= m.url %>"><%= m.url.slice(-16) %></code></div></div>
+                  <% }); %>
+                </div>
+              </details>
+            <% } %>
+          </fieldset>
+
+          <fieldset>
+            <legend><%= locale === 'en' ? 'Custom HTML / third-party script (sandboxed)' : 'কাস্টম HTML / থার্ড-পার্টি স্ক্রিপ্ট (স্যান্ডবক্সড)' %></legend>
+            <div class="field">
+              <label for="html"><%= locale === 'en' ? 'HTML creative' : 'HTML ক্রিয়েটিভ' %></label>
+              <textarea id="html" name="html" style="min-height:110px;font-family:ui-monospace,monospace;font-size:13px"><%= val('html') %></textarea>
+            </div>
+            <div class="field">
+              <label for="script_src"><%= locale === 'en' ? 'Script URL (allowlisted domains only)' : 'স্ক্রিপ্ট লিংক (শুধু অনুমোদিত ডোমেইন)' %></label>
+              <input id="script_src" name="script_src" maxlength="600" value="<%= val('script_src') %>">
+              <span class="hint">
+                🛡️ <%= locale === 'en'
+                  ? 'Rendered in a sandboxed frame with its own CSP — it cannot read our cookies or DOM. Only these hosts are accepted: '
+                  : 'স্যান্ডবক্সড ফ্রেমে রেন্ডার হয় — আমাদের কুকি বা DOM পড়তে পারে না। শুধু এই হোস্ট গ্রহণযোগ্য: ' %>
+                <code class="small">pagead2.googlesyndication.com, tpc.googlesyndication.com, cdn.ampproject.org</code>
+              </span>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <div class="panel__head">🚀 <%= locale === 'en' ? 'Delivery' : 'ডেলিভারি' %></div>
+        <div class="panel__body">
+          <div class="field">
+            <label for="status"><%= locale === 'en' ? 'Status' : 'স্ট্যাটাস' %></label>
+            <select id="status" name="status">
+              <% ['active', 'paused', 'expired'].forEach(function (s) { %>
+                <option value="<%= s %>" <%= val('status', 'active') === s ? 'selected' : '' %>><%= s %></option>
+              <% }); %>
+            </select>
+          </div>
+          <div class="field-row">
+            <div class="field"><label for="priority"><%= locale === 'en' ? 'Priority (1 = first)' : 'অগ্রাধিকার' %></label><input id="priority" name="priority" type="number" min="1" max="1000" value="<%= val('priority', 50) %>"></div>
+            <div class="field"><label for="weight"><%= locale === 'en' ? 'Weight' : 'ওয়েট' %></label><input id="weight" name="weight" type="number" min="1" max="10000" value="<%= val('weight', 100) %>"></div>
+          </div>
+          <div class="field"><label for="daily_cap"><%= locale === 'en' ? 'Daily cap (0 = unlimited)' : 'দৈনিক সীমা (০ = অসীম)' %></label><input id="daily_cap" name="daily_cap" type="number" min="0" value="<%= val('daily_cap', 0) %>"></div>
+          <div class="field-row">
+            <div class="field"><label for="starts_at"><%= locale === 'en' ? 'Starts (UTC)' : 'শুরু' %></label><input id="starts_at" name="starts_at" placeholder="2026-01-01T00:00:00Z" value="<%= val('starts_at') %>"></div>
+            <div class="field"><label for="ends_at"><%= locale === 'en' ? 'Ends (UTC)' : 'শেষ' %></label><input id="ends_at" name="ends_at" placeholder="2026-12-31T23:59:59Z" value="<%= val('ends_at') %>"></div>
+          </div>
+          <button class="btn" type="submit" style="width:100%"><%= ad ? (locale === 'en' ? 'Save campaign' : 'সংরক্ষণ') : (locale === 'en' ? 'Create campaign' : 'ক্যাম্পেইন তৈরি') %></button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">🎯 <%= locale === 'en' ? 'Targeting' : 'টার্গেটিং' %></div>
+        <div class="panel__body">
+          <div class="field">
+            <label for="target_devices"><%= locale === 'en' ? 'Devices (csv)' : 'ডিভাইস (কমা দিয়ে)' %></label>
+            <input id="target_devices" name="target_devices" maxlength="60" value="<%= val('target_devices') %>" placeholder="desktop,mobile,tablet">
+          </div>
+          <div class="field">
+            <label for="target_countries"><%= locale === 'en' ? 'Countries (ISO codes, csv)' : 'দেশ (ISO কোড)' %></label>
+            <input id="target_countries" name="target_countries" maxlength="200" value="<%= val('target_countries') %>" placeholder="BD,SA,AE,US">
+          </div>
+          <div class="field">
+            <label for="target_categories"><%= locale === 'en' ? 'Category slugs (csv)' : 'বিভাগ স্লাগ' %></label>
+            <input id="target_categories" name="target_categories" maxlength="400" value="<%= val('target_categories') %>" placeholder="sports,economy">
+            <span class="hint">
+              <% categories.forEach(function (c) { %><code class="small"><%= c.slug %></code> <% }); %>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<%- include('_shell-close') %>

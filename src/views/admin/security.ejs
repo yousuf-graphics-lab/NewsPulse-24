@@ -1,0 +1,122 @@
+<%- include('_shell-open') %>
+
+<div class="cards">
+  <div class="stat alt"><span class="label"><%= locale === 'en' ? 'Events logged' : 'রেকর্ডকৃত ইভেন্ট' %></span><span class="value"><%= h.bnNumber(events.length) %></span></div>
+  <div class="stat"><span class="label"><%= locale === 'en' ? 'Blocked IPs' : 'ব্লকড আইপি' %></span><span class="value"><%= h.bnNumber(blocked.length) %></span></div>
+  <div class="stat alt"><span class="label"><%= locale === 'en' ? 'Distinct signals' : 'ধরন' %></span><span class="value"><%= h.bnNumber(kinds.length) %></span></div>
+  <div class="stat alt"><span class="label"><%= locale === 'en' ? 'Environment' : 'পরিবেশ' %></span><span class="value" style="font-size:18px"><%= process.env.NODE_ENV || 'development' %></span>
+    <span class="muted small"><%= locale === 'en' ? 'CSP nonce + HSTS + SameSite=strict are enforced.' : 'CSP ননস, HSTS ও SameSite=strict চালু।' %></span>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel__head">🚦 <%= locale === 'en' ? 'Signals' : 'সিগন্যাল' %></div>
+    <div class="panel__body tight table-wrap">
+      <table class="tbl">
+        <thead><tr><th>Kind</th><th>Severity</th><th class="num">Count</th><th><%= locale === 'en' ? 'Last' : 'শেষ' %></th></tr></thead>
+        <tbody>
+          <% kinds.forEach(function (k) { %>
+            <tr>
+              <td><code class="small"><%= k.kind %></code></td>
+              <td><span class="tag tag--<%= k.severity === 'critical' || k.severity === 'high' ? 'err' : k.severity === 'medium' ? 'warn' : 'ok' %>"><%= k.severity %></span></td>
+              <td class="num"><%= h.bnNumber(k.n) %></td>
+              <td class="small muted"><%= h.timeAgo(k.last, locale) %></td>
+            </tr>
+          <% }); %>
+          <% if (!kinds.length) { %><tr><td colspan="4" class="muted">✓ <%= locale === 'en' ? 'Nothing suspicious recorded.' : 'সন্দেহজনক কিছু নেই।' %></td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head">⛔ <%= locale === 'en' ? 'IP blocklist' : 'আইপি ব্লকলিস্ট' %></div>
+    <div class="panel__body">
+      <form method="post" action="/admin/security/block" class="row" style="gap:6px;margin-bottom:12px">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input name="ip" required placeholder="203.0.113.45" style="flex:1;padding:8px 11px;border:1px solid var(--line);border-radius:7px">
+        <input name="reason" placeholder="<%= locale === 'en' ? 'reason' : 'কারণ' %>" style="flex:1;padding:8px 11px;border:1px solid var(--line);border-radius:7px">
+        <button class="btn btn--danger btn--sm" type="submit"><%= locale === 'en' ? 'Block' : 'ব্লক' %></button>
+      </form>
+      <div class="table-wrap">
+        <table class="tbl">
+          <thead><tr><th>IP</th><th><%= locale === 'en' ? 'Reason' : 'কারণ' %></th><th></th></tr></thead>
+          <tbody>
+            <% blocked.forEach(function (b) { %>
+              <tr>
+                <td><code class="small"><%= b.ip %></code><div class="small muted"><%= h.formatDate(b.blocked_at, locale) %></div></td>
+                <td class="small"><%= b.reason || '—' %></td>
+                <td>
+                  <form method="post" action="/admin/security/unblock" style="display:inline">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="ip" value="<%= b.ip %>">
+                    <button class="btn btn--ghost btn--sm" type="submit"><%= locale === 'en' ? 'Unblock' : 'আনব্লক' %></button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+            <% if (!blocked.length) { %><tr><td colspan="3" class="muted"><%= locale === 'en' ? 'Nothing blocked.' : 'কিছু ব্লক নেই।' %></td></tr><% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel__head">🛡️ <%= locale === 'en' ? 'Security event stream' : 'নিরাপত্তা ইভেন্ট' %></div>
+  <div class="panel__body tight table-wrap">
+    <table class="tbl">
+      <thead><tr><th><%= locale === 'en' ? 'When' : 'সময়' %></th><th>Kind</th><th>Severity</th><th>IP</th><th><%= locale === 'en' ? 'Detail' : 'বিবরণ' %></th></tr></thead>
+      <tbody>
+        <% events.forEach(function (e) { %>
+          <tr>
+            <td class="small muted"><%= h.formatDateTime(e.created_at, locale) %></td>
+            <td><code class="small"><%= e.kind %></code></td>
+            <td><span class="tag tag--<%= e.severity === 'critical' || e.severity === 'high' ? 'err' : e.severity === 'medium' ? 'warn' : 'ok' %>"><%= e.severity %></span></td>
+            <td class="small"><%= e.ip_last_octet || '—' %></td>
+            <td class="small" style="max-width:420px"><%= e.detail || '' %></td>
+          </tr>
+        <% }); %>
+        <% if (!events.length) { %><tr><td colspan="5" class="muted">✓ <%= locale === 'en' ? 'Clean.' : 'পরিষ্কার।' %></td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel__head">🧾 <%= locale === 'en' ? 'Audit trail' : 'অডিট ট্রেইল' %></div>
+  <div class="panel__body tight table-wrap">
+    <table class="tbl">
+      <thead><tr><th><%= locale === 'en' ? 'When' : 'সময়' %></th><th><%= locale === 'en' ? 'Who' : 'কে' %></th><th><%= locale === 'en' ? 'Action' : 'কাজ' %></th><th>Entity</th><th>Meta</th></tr></thead>
+      <tbody>
+        <% audit.forEach(function (a) { %>
+          <tr>
+            <td class="small muted"><%= h.formatDateTime(a.created_at, locale) %></td>
+            <td class="small"><%= a.user_name || a.actor %></td>
+            <td><span class="tag tag--ink"><%= a.action %></span></td>
+            <td class="small"><%= a.entity || '—' %><%= a.entity_id ? ' #' + a.entity_id : '' %></td>
+            <td class="small muted" style="max-width:300px"><%= (a.meta || '').slice(0, 90) %></td>
+          </tr>
+        <% }); %>
+        <% if (!audit.length) { %><tr><td colspan="5" class="muted">—</td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel__head">📖 <%= locale === 'en' ? 'Hardening checklist' : 'হার্ডেনিং চেকলিস্ট' %></div>
+  <div class="panel__body">
+    <ul class="small" style="margin:0;padding-left:18px;line-height:1.9">
+      <li><%= locale === 'en' ? 'Set SESSION_SECRET, CSRF_SECRET and IP_HASH_PEPPER in .env (64+ random chars).' : '.env-এ SESSION_SECRET, CSRF_SECRET ও IP_HASH_PEPPER দিন।' %></li>
+      <li><%= locale === 'en' ? 'Run behind HTTPS with HSTS; TRUST_PROXY=true only behind nginx/Cloudflare.' : 'HTTPS-এ চালান; nginx/Cloudflare-এর পেছনে থাকলে TRUST_PROXY=true।' %></li>
+      <li><%= locale === 'en' ? 'Enable 2FA for every editor and super-admin account.' : 'প্রতিটি এডিটর ও সুপার অ্যাডমিন অ্যাকাউন্টে ২এফএ চালু করুন।' %></li>
+      <li><%= locale === 'en' ? 'Keep third-party ad scripts inside the allowlist (AD_SCRIPT_ALLOWLIST).' : 'থার্ড-পার্টি অ্যাড স্ক্রিপ্ট শুধু অনুমোদিত ডোমেইনে রাখুন।' %></li>
+      <li><%= locale === 'en' ? 'Run `npm run backup` from cron and test restoring it.' : 'ক্রন থেকে `npm run backup` চালান এবং রিস্টোর পরীক্ষা করুন।' %></li>
+      <li><%= locale === 'en' ? 'Watch this page for csp_violation and ai_prompt_injection events.' : 'এই পেজে csp_violation ও ai_prompt_injection ইভেন্ট খেয়াল রাখুন।' %></li>
+    </ul>
+  </div>
+</div>
+
+<%- include('_shell-close') %>

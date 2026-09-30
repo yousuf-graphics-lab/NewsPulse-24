@@ -1,0 +1,61 @@
+<%- include('_shell-open') %>
+
+<div class="cards">
+  <div class="stat"><span class="label"><%= locale === 'en' ? 'Questions (30d)' : 'প্রশ্ন (৩০দি)' %></span><span class="value"><%= h.bnNumber(stats.total) %></span></div>
+  <div class="stat alt"><span class="label"><%= locale === 'en' ? 'Avg response' : 'গড় সময়' %></span><span class="value"><%= h.bnNumber(stats.avgMs) %>ms</span></div>
+  <div class="stat alt"><span class="label"><%= locale === 'en' ? 'Engine' : 'ইঞ্জিন' %></span>
+    <span class="value" style="font-size:18px"><%= provider ? provider.key : 'local' %></span>
+    <span class="muted small"><%= provider ? provider.model : (locale === 'en' ? 'no API key — grounded local engine' : 'কি নেই — লোকাল ইঞ্জিন') %></span>
+  </div>
+  <div class="stat alt"><span class="label"><%= locale === 'en' ? 'Languages used' : 'ব্যবহৃত ভাষা' %></span>
+    <span class="value" style="font-size:16px">
+      <% stats.byLang.forEach(function (l) { %><span class="tag"><%= l.lang %>: <%= h.bnNumber(l.n) %></span> <% }); %>
+      <% if (!stats.byLang.length) { %>—<% } %>
+    </span>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel__head">✨ <%= locale === 'en' ? 'How the assistant behaves' : 'অ্যাসিস্ট যেভাবে কাজ করে' %></div>
+    <div class="panel__body small">
+      <ul style="margin:0;padding-left:18px;line-height:1.9">
+        <li><b><%= locale === 'en' ? 'Language mirroring' : 'ভাষা অনুসরণ' %></b> — <%= locale === 'en' ? 'Bangla in, Bangla out; English in, English out; Banglish in, Banglish out (Bangla written in Latin letters).' : 'বাংলা প্রশ্নে বাংলা, ইংরেজিতে ইংরেজি, বাংলাইশে বাংলাইশ উত্তর।' %></li>
+        <li><b><%= locale === 'en' ? 'Grounded answers' : 'তথ্যভিত্তিক উত্তর' %></b> — <%= locale === 'en' ? 'the model receives the live trending digest and must not invent headlines.' : 'মডেলকে লাইভ ট্রেন্ডিং ডাইজেস্ট দেওয়া হয়; কল্পনা করে সংবাদ বলা নিষেধ।' %></li>
+        <li><b><%= locale === 'en' ? 'Injection defence' : 'ইনজেকশন সুরক্ষা' %></b> — <%= locale === 'en' ? 'prompt-injection attempts are stripped and logged as `ai_prompt_injection`.' : 'প্রম্পট-ইনজেকশন চেষ্টা সরিয়ে ফেলা হয় এবং লগ করা হয়।' %></li>
+        <li><b><%= locale === 'en' ? 'Rate limiting' : 'রেট লিমিট' %></b> — <%= locale === 'en' ? 'per-IP cap (AI_RATE_LIMIT, default 20 per 10 minutes).' : 'প্রতি আইপিতে সীমা (ডিফল্ট ১০ মিনিটে ২০টি)।' %></li>
+        <li><b><%= locale === 'en' ? 'No PII' : 'ব্যক্তিগত তথ্য নয়' %></b> — <%= locale === 'en' ? 'IPs are hashed before storage; only a visitor id links turns together.' : 'আইপি হ্যাশ করা হয়; শুধু ভিজিটর আইডি দিয়ে টার্ন যুক্ত থাকে।' %></li>
+      </ul>
+
+      <h4 style="margin:16px 0 6px"><%= locale === 'en' ? 'Connect a model' : 'মডেল যুক্ত করা' %></h4>
+      <pre style="background:var(--paper-2);padding:12px;border-radius:8px;overflow:auto;font-size:12px;line-height:1.6">AI_PROVIDER=groq
+AI_API_KEY=your_key_here
+AI_MODEL=llama-3.3-70b-versatile</pre>
+      <p class="muted" style="margin:8px 0 0"><%= locale === 'en' ? 'Providers supported: openai, groq, gemini, openrouter, or any OpenAI-compatible endpoint via AI_BASE_URL.' : 'সমর্থিত: openai, groq, gemini, openrouter, অথবা AI_BASE_URL দিয়ে যেকোনো OpenAI-সামঞ্জস্যপূর্ণ এন্ডপয়েন্ট।' %></p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head">🧾 <%= locale === 'en' ? 'Recent conversations' : 'সাম্প্রতিক কথোপকথন' %></div>
+    <div class="panel__body tight table-wrap">
+      <table class="tbl">
+        <thead><tr><th><%= locale === 'en' ? 'When' : 'সময়' %></th><th>Chat</th><th>Role</th><th><%= locale === 'en' ? 'Message' : 'বার্তা' %></th><th>Lang</th><th>Engine</th></tr></thead>
+        <tbody>
+          <% recent.forEach(function (m) { %>
+            <tr>
+              <td class="small muted"><%= h.timeAgo(m.created_at, locale) %></td>
+              <td class="small"><code><%= String(m.chat_id).slice(0, 8) %></code></td>
+              <td><span class="tag tag--<%= m.role === 'user' ? 'ink' : 'ok' %>"><%= m.role %></span></td>
+              <td class="small" style="max-width:420px"><%= m.content.slice(0, 160) %><%= m.content.length > 160 ? '…' : '' %></td>
+              <td class="small"><%= m.lang || '—' %></td>
+              <td class="small"><%= m.engine || '—' %></td>
+            </tr>
+          <% }); %>
+          <% if (!recent.length) { %><tr><td colspan="6" class="muted"><%= locale === 'en' ? 'No conversations yet.' : 'এখনো কোনো কথোপকথন নেই।' %></td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('_shell-close') %>

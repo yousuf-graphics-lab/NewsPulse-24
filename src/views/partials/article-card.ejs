@@ -1,0 +1,35 @@
+<%# Compact news card. `a` is a decorated article; `compact` hides the excerpt. %>
+<%
+  const compact = typeof isCompact !== 'undefined' ? isCompact : false;
+  const cover = a.cover || '';
+%>
+<article class="card">
+  <a class="card__media" href="<%= a.url %>" tabindex="-1" aria-hidden="true">
+    <% if (cover) { %>
+      <img src="<%= cover %>" alt="" loading="lazy" decoding="async" width="640" height="360">
+    <% } else { %>
+      <span class="placeholder">NP24</span>
+    <% } %>
+    <% if (a.media_type === 'video' || a.embed) { %>
+      <span class="card__play"><span>▶</span></span>
+    <% } %>
+  </a>
+  <div class="card__body">
+    <div class="row" style="gap:7px">
+      <% if (a.category) { %>
+        <a href="/category/<%= a.categorySlug %>"><span class="badge-cat" <%= a.categoryColor ? 'style="background:' + a.categoryColor + '"' : '' %>><%= a.category %></span></a>
+      <% } %>
+      <% if (Number(a.is_breaking)) { %><span class="badge-cat badge-live"><%= locale === 'en' ? 'BREAKING' : 'ব্রেকিং' %></span><% } %>
+      <% if (Number(a.is_sponsored)) { %><span class="badge-cat badge-cat--dark"><%= a.sponsor_label || (locale === 'en' ? 'Sponsored' : 'স্পনসরড') %></span><% } %>
+      <% if (Number(a.is_demo)) { %><span class="chip-demo"><%= locale === 'en' ? 'Demo' : 'নমুনা' %></span><% } %>
+    </div>
+    <h3 class="card__title"><a href="<%= a.url %>"><%= a.title %></a></h3>
+    <% if (!compact && a.excerpt) { %><p class="card__excerpt"><%= a.excerpt %></p><% } %>
+    <div class="card__meta">
+      <time datetime="<%= a.published_at || '' %>"><%= a.timeAgo %></time>
+      <span class="dot"></span>
+      <span><%= locale === 'en' ? a.read_minutes + ' min read' : h.bnNumber(a.read_minutes) + ' মিনিট' %></span>
+      <% if (a.views) { %><span class="dot"></span><span>👁 <%= a.viewsLabel %></span><% } %>
+    </div>
+  </div>
+</article>

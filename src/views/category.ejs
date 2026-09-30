@@ -1,0 +1,47 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<%- include('partials/ad-slot', { slotId: 'top-leaderboard' }) %>
+
+<div class="wrap layout">
+  <main id="main">
+    <div class="static-page" style="padding:22px 24px;margin-bottom:18px;border-left:5px solid <%= category.color %>">
+      <nav class="article__crumb" aria-label="Breadcrumb">
+        <a href="/"><%= locale === 'en' ? 'Home' : 'প্রচ্ছদ' %></a> › <span><%= locale === 'en' ? category.name_en : category.name_bn %></span>
+      </nav>
+      <h1 style="font-size:27px;margin-bottom:6px"><%= locale === 'en' ? category.name_en : category.name_bn %></h1>
+      <% if (category.description) { %><p class="muted" style="margin:0"><%= category.description %></p><% } %>
+      <p class="muted small" style="margin:8px 0 0"><%= locale === 'en' ? h.bnNumber(total) + ' stories' : h.bnNumber(total) + 'টি সংবাদ' %></p>
+    </div>
+
+    <%- include('partials/ad-slot', { slotId: 'below-ticker' }) %>
+
+    <% if (!articles.length) { %>
+      <div class="static-page"><p><%= locale === 'en' ? 'No stories published in this category yet.' : 'এই বিভাগে এখনো কোনো সংবাদ প্রকাশিত হয়নি।' %></p></div>
+    <% } else { %>
+      <div class="grid grid--3">
+        <% articles.forEach(function (a, i) { %>
+          <%- include('partials/article-card', { a: a }) %>
+          <% if (i === 5) { %><%- include('partials/ad-slot', { slotId: 'between-cards', variantClass: 'ad--inline' }) %><% } %>
+        <% }); %>
+      </div>
+      <%- include('partials/pagination', { page: page, totalPages: totalPages, baseUrl: '/category/' + category.slug }) %>
+    <% } %>
+  </main>
+
+  <aside class="sidebar">
+    <%- include('partials/ad-slot', { slotId: 'sidebar-top' }) %>
+    <div class="widget">
+      <div class="widget__head">🔥 <span class="accent"><%= locale === 'en' ? 'Most read' : 'সর্বাধিক পঠিত' %></span></div>
+      <div class="widget__body">
+        <ol class="ranked">
+          <% mostRead.forEach(function (a) { %>
+            <li><a href="<%= a.url %>"><%= a.title %><span class="meta"><%= a.category || '' %> · 👁 <%= h.compactNumber(a.views) %></span></a></li>
+          <% }); %>
+        </ol>
+      </div>
+    </div>
+    <%- include('partials/ad-slot', { slotId: 'sidebar-sticky' }) %>
+  </aside>
+</div>
+
+<%- include('partials/footer') %>

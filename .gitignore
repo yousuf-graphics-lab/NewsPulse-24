@@ -1,0 +1,35 @@
+# --- Secrets: NEVER commit these ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Runtime data (SQLite DB, uploads, backups) ---
+data/
+data/*.db
+data/*.db-*
+storage/
+storage/uploads/**
+!storage/uploads/.gitkeep
+backups/
+*.sqlite
+*.sqlite3
+
+# --- Node ---
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+coverage/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# --- Logs ---
+logs/
+*.log

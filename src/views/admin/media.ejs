@@ -1,0 +1,47 @@
+<%- include('_shell-open') %>
+
+<div class="panel">
+  <div class="panel__head">
+    🖼️ <%= locale === 'en' ? 'Media library' : 'মিডিয়া লাইব্রেরি' %>
+    <span class="sub"><%= h.bnNumber(items.length) %> <%= locale === 'en' ? 'files' : 'টি ফাইল' %> · <%= (totals.bytes / 1048576).toFixed(2) %> MB</span>
+  </div>
+  <div class="panel__body">
+    <% if (can('media.upload')) { %>
+      <form method="post" action="/admin/media" enctype="multipart/form-data" style="margin-bottom:18px">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="dropzone" data-dropzone>
+          <b><%= locale === 'en' ? 'Drop an image here, or click to choose' : 'ছবি টেনে আনুন, অথবা ক্লিক করে বাছুন' %></b>
+          <p class="small" style="margin:6px 0 0">
+            JPG · PNG · WEBP · GIF · AVIF — <%= locale === 'en' ? 'max' : 'সর্বোচ্চ' %> 8 MB.
+            <%= locale === 'en' ? 'SVG is refused (it can carry script); every file is verified by its magic bytes.' : 'SVG গ্রহণ করা হয় না; প্রতিটি ফাইলের প্রকৃত টাইপ যাচাই করা হয়।' %>
+          </p>
+          <input type="file" name="file" accept=".jpg,.jpeg,.png,.webp,.gif,.avif" hidden>
+        </div>
+        <div class="field" style="margin-top:10px">
+          <label for="alt"><%= locale === 'en' ? 'Alt text (accessibility + SEO)' : 'Alt টেক্সট' %></label>
+          <input id="alt" name="alt" maxlength="300">
+        </div>
+      </form>
+    <% } %>
+
+    <div class="media-grid">
+      <% items.forEach(function (m) { %>
+        <div class="media-item">
+          <img src="<%= m.url %>" alt="<%= m.alt || '' %>" loading="lazy">
+          <div class="meta">
+            <code data-copy="<%= m.url %>" title="<%= locale === 'en' ? 'Click to copy URL' : 'কপি করতে ক্লিক করুন' %>"><%= m.url.slice(-18) %></code>
+            <% if (can('media.delete')) { %>
+              <form method="post" action="/admin/media/<%= m.id %>/delete" data-confirm="<%= locale === 'en' ? 'Delete this file?' : 'ফাইলটি মুছবেন?' %>" style="display:inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="btn btn--danger btn--sm" type="submit" style="padding:2px 7px">✕</button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+      <% }); %>
+      <% if (!items.length) { %><p class="muted"><%= locale === 'en' ? 'No uploads yet.' : 'এখনো কোনো আপলোড নেই।' %></p><% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('_shell-close') %>

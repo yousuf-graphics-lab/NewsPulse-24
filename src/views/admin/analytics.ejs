@@ -1,0 +1,119 @@
+<%- include('_shell-open') %>
+<% const d = data; %>
+
+<div class="panel">
+  <div class="panel__head">
+    📈 <%= locale === 'en' ? 'Traffic over time' : 'সময়ের সঙ্গে ট্রাফিক' %>
+    <span class="spacer"></span>
+    <% [7, 30, 90, 180].forEach(function (n) { %>
+      <a class="btn btn--ghost btn--sm <%= Number(days) === n ? 'btn--ink' : '' %>" href="?days=<%= n %>"><%= h.bnNumber(n) %></a>
+    <% }); %>
+  </div>
+  <div class="panel__body">
+    <div class="chart" style="height:260px" data-series='<%- JSON.stringify(d.timeSeries.map(function (r) { return { l: r.day.slice(5), v: r.pageviews }; })) %>'></div>
+  </div>
+</div>
+
+<div class="grid-3">
+  <div class="panel">
+    <div class="panel__head">🌍 <%= locale === 'en' ? 'Countries' : 'দেশ' %></div>
+    <div class="panel__body tight table-wrap">
+      <table class="tbl">
+        <thead><tr><th><%= locale === 'en' ? 'Country' : 'দেশ' %></th><th class="num">Views</th><th class="num">UV</th></tr></thead>
+        <tbody>
+          <% d.countries.forEach(function (c) { %>
+            <tr><td><%= c.country %></td><td class="num"><%= h.bnNumber(c.pageviews) %></td><td class="num"><%= h.bnNumber(c.visitors) %></td></tr>
+          <% }); %>
+          <% if (!d.countries.length) { %><tr><td colspan="3" class="muted">—</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head">💻 <%= locale === 'en' ? 'Browser & OS' : 'ব্রাউজার ও ওএস' %></div>
+    <div class="panel__body tight table-wrap">
+      <table class="tbl">
+        <thead><tr><th>Browser</th><th>OS</th><th class="num">Views</th></tr></thead>
+        <tbody>
+          <% d.browsers.forEach(function (b) { %>
+            <tr><td><%= b.browser %></td><td><%= b.os %></td><td class="num"><%= h.bnNumber(b.n) %></td></tr>
+          <% }); %>
+          <% if (!d.browsers.length) { %><tr><td colspan="3" class="muted">—</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head">🔁 <%= locale === 'en' ? 'Return visits' : 'পুনরাগমন' %></div>
+    <div class="panel__body">
+      <div class="donut">
+        <% d.retention.forEach(function (r) { %>
+          <div class="row">
+            <span><%= h.bnNumber(r.visit_count) %> <%= locale === 'en' ? 'day(s)' : 'দিন' %></span>
+            <span class="track"><span class="fill" style="width:<%= Math.min(100, r.visitors * 10) %>%"></span></span>
+            <span class="val"><%= h.bnNumber(r.visitors) %></span>
+          </div>
+        <% }); %>
+        <% if (!d.retention.length) { %><p class="muted small" style="margin:0">—</p><% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="panel">
+    <div class="panel__head">📄 <%= locale === 'en' ? 'Top pages' : 'জনপ্রিয় পেজ' %></div>
+    <div class="panel__body tight table-wrap">
+      <table class="tbl">
+        <thead><tr><th>Path</th><th class="num">Views</th></tr></thead>
+        <tbody>
+          <% d.topPages.forEach(function (p) { %>
+            <tr><td><a href="<%= p.path %>" target="_blank" rel="noopener"><%= p.path %></a></td><td class="num"><%= h.bnNumber(p.views) %></td></tr>
+          <% }); %>
+          <% if (!d.topPages.length) { %><tr><td colspan="2" class="muted">—</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel__head">🔍 <%= locale === 'en' ? 'What readers search for' : 'পাঠকরা কী খোঁজেন' %></div>
+    <div class="panel__body tight table-wrap">
+      <table class="tbl">
+        <thead><tr><th><%= locale === 'en' ? 'Term' : 'শব্দ' %></th><th class="num"><%= locale === 'en' ? 'Searches' : 'অনুসন্ধান' %></th></tr></thead>
+        <tbody>
+          <% searches.forEach(function (s) { %>
+            <tr><td><%= s.term %></td><td class="num"><%= h.bnNumber(s.hits) %></td></tr>
+          <% }); %>
+          <% if (!searches.length) { %><tr><td colspan="2" class="muted"><%= locale === 'en' ? 'No searches yet.' : 'এখনো কোনো অনুসন্ধান নেই।' %></td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel__head">🧾 <%= locale === 'en' ? 'Raw event log' : 'ইভেন্ট লগ' %></div>
+  <div class="panel__body tight table-wrap">
+    <table class="tbl">
+      <thead><tr><th><%= locale === 'en' ? 'Time' : 'সময়' %></th><th>Event</th><th>Path</th><th>Source</th><th><%= locale === 'en' ? 'Geo' : 'অবস্থান' %></th><th>Device</th></tr></thead>
+      <tbody>
+        <% recentEvents.forEach(function (e) { %>
+          <tr>
+            <td class="small muted"><%= h.timeAgo(e.ts, locale) %></td>
+            <td><span class="tag tag--<%= e.event_type === 'pageview' ? 'ink' : 'ok' %>"><%= e.event_type %></span></td>
+            <td class="small"><%= e.path || '—' %></td>
+            <td class="small"><%= e.source || '—' %></td>
+            <td class="small"><%= e.country || '—' %><% if (e.city) { %> · <%= e.city %><% } %></td>
+            <td class="small"><%= e.device %> / <%= e.browser %></td>
+          </tr>
+        <% }); %>
+        <% if (!recentEvents.length) { %><tr><td colspan="6" class="muted"><%= locale === 'en' ? 'No events yet.' : 'এখনো কোনো ইভেন্ট নেই।' %></td></tr><% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('_shell-close') %>

@@ -1,0 +1,228 @@
+<%- include('partials/head', { ogImage: article.cover ? (article.cover.startsWith('http') ? article.cover : publicUrl + article.cover) : '' }) %>
+<%- include('partials/header') %>
+
+<div class="wrap layout">
+  <main id="main">
+    <article class="article" data-font="md" itemscope itemtype="https://schema.org/NewsArticle">
+      <nav class="article__crumb" aria-label="Breadcrumb">
+        <a href="/"><%= locale === 'en' ? 'Home' : 'প্রচ্ছদ' %></a> ›
+        <% if (article.category) { %><a href="/category/<%= article.categorySlug %>"><%= article.category %></a> ›<% } %>
+        <span aria-current="page"><%= locale === 'en' ? 'Story' : 'সংবাদ' %></span>
+      </nav>
+
+      <div class="row" style="gap:7px;margin-bottom:10px">
+        <% if (article.category) { %><a href="/category/<%= article.categorySlug %>"><span class="badge-cat" <%= article.categoryColor ? 'style="background:' + article.categoryColor + '"' : '' %>><%= article.category %></span></a><% } %>
+        <% if (Number(article.is_breaking)) { %><span class="badge-cat badge-live"><%= locale === 'en' ? 'BREAKING' : 'ব্রেকিং' %></span><% } %>
+        <% if (Number(article.is_sponsored)) { %><span class="badge-cat badge-cat--dark"><%= article.sponsor_label || (locale === 'en' ? 'Sponsored' : 'স্পনসরড') %></span><% } %>
+        <% if (Number(article.is_demo)) { %><span class="chip-demo"><%= locale === 'en' ? 'Demo content — replace from Admin' : 'নমুনা কনটেন্ট — অ্যাডমিন থেকে বদলান' %></span><% } %>
+        <% if (article.corrected_at) { %><span class="badge-cat" style="background:var(--warn,#b26a00)"><%= locale === 'en' ? 'Corrected' : 'সংশোধিত' %></span><% } %>
+      </div>
+
+      <h1 itemprop="headline"><%= article.title %></h1>
+      <% if (article.subtitle) { %><p class="article__sub" itemprop="alternativeHeadline"><%= article.subtitle %></p><% } %>
+
+      <div class="article__meta">
+        <div class="article__author">
+          <span class="avatar" aria-hidden="true"><%= (article.author_name || 'NP').slice(0, 1).toUpperCase() %></span>
+          <span>
+            <% if (article.author_slug) { %>
+              <b><a href="/author/<%= article.author_slug %>" itemprop="author"><%= article.author_name %></a></b>
+            <% } else { %>
+              <b itemprop="author"><%= article.author_name || site.site_name_bn %></b>
+            <% } %>
+            <span class="small"><%= article.author_designation || (locale === 'en' ? 'Newsroom' : 'সংবাদ কক্ষ') %></span>
+          </span>
+        </div>
+        <span class="dot"></span>
+        <time datetime="<%= article.published_at || '' %>" itemprop="datePublished"><%= h.formatDateTime(article.published_at, locale) %></time>
+        <% if (article.updated_at && article.updated_at !== article.published_at) { %>
+          <span class="dot"></span>
+          <span><%= locale === 'en' ? 'Updated' : 'হালনাগাদ' %>: <time datetime="<%= article.updated_at %>" itemprop="dateModified"><%= h.timeAgo(article.updated_at, locale) %></time></span>
+        <% } %>
+        <span class="dot"></span>
+        <span><%= locale === 'en' ? h.bnNumber(article.read_minutes) + ' min read' : h.bnNumber(article.read_minutes) + ' মিনিট পড়া' %></span>
+        <span class="dot"></span>
+        <span>👁 <%= article.viewsLabel %></span>
+      </div>
+
+      <% if (corrections.length) { %>
+        <div class="correction-box" role="note">
+          <b><%= locale === 'en' ? 'Corrections & clarifications' : 'সংশোধনী ও স্পষ্টীকরণ' %></b>
+          <ul style="margin:8px 0 0">
+            <% corrections.forEach(function (c) { %>
+              <li><strong><%= c.kind %>:</strong> <%= c.note %> <span class="muted small">— <%= h.formatDate(c.created_at, locale) %><% if (c.editor_name) { %>, <%= c.editor_name %><% } %></span></li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
+
+      <% if (article.cover) { %>
+        <figure class="article__hero">
+          <img src="<%= article.cover %>" alt="<%= article.cover_caption || article.title %>" width="1200" height="675" fetchpriority="high" itemprop="image">
+          <% if (article.cover_caption || article.cover_credit) { %>
+            <figcaption class="article__caption">
+              <%= article.cover_caption %><% if (article.cover_credit) { %> <span class="muted">· <%= locale === 'en' ? 'Photo' : 'ছবি' %>: <%= article.cover_credit %></span><% } %>
+            </figcaption>
+          <% } %>
+        </figure>
+      <% } %>
+
+      <% if (article.embed) { %>
+        <div class="article__hero">
+          <iframe data-src="<%= article.embed %>" title="<%= article.title %>" loading="lazy" allowfullscreen
+                  allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+      <% } %>
+
+      <% if (article.gallery.length) { %>
+        <div class="grid grid--2 article__hero">
+          <% article.gallery.filter(function (g) { return g.src; }).forEach(function (g) { %>
+            <figure style="margin:0"><img src="<%= h.safeUrl(g.src) %>" alt="<%= g.alt || '' %>" loading="lazy"><figcaption class="article__caption"><%= g.alt %></figcaption></figure>
+          <% }); %>
+        </div>
+      <% } %>
+
+      <%- include('partials/ad-slot', { slotId: 'in-article', variantClass: 'ad--inline' }) %>
+
+      <div class="article__body" itemprop="articleBody">
+        <%- bodyHtml %>
+      </div>
+
+      <% if (article.source_name) { %>
+        <p class="muted small" style="margin-top:16px">
+          <%= locale === 'en' ? 'Source' : 'সূত্র' %>:
+          <% if (article.source_url) { %><a href="<%= h.safeUrl(article.source_url) %>" rel="nofollow noopener" target="_blank"><%= article.source_name %></a>
+          <% } else { %><%= article.source_name %><% } %>
+        </p>
+      <% } %>
+
+      <% const tagList = String(article.tags || '').split(',').map(function (t) { return t.trim(); }).filter(Boolean); %>
+      <% if (tagList.length) { %>
+        <div class="article__tags">
+          <% tagList.forEach(function (t) { %>
+            <a class="tag" href="/tag/<%= encodeURIComponent(t) %>" style="padding:5px 11px;border-radius:999px;border:1px solid var(--line);font-size:13px">#<%= t %></a>
+          <% }); %>
+        </div>
+      <% } %>
+
+      <div class="toolbar">
+        <button class="btn btn--ghost btn-like" type="button" data-id="<%= article.id %>">
+          👍 <%= locale === 'en' ? 'Useful' : 'ভালো লেগেছে' %> (<span class="count"><%= article.likes %></span>)
+        </button>
+        <span class="font-ctl" role="group" aria-label="<%= locale === 'en' ? 'Text size' : 'লেখার আকার' %>">
+          <span class="muted small">অ</span>
+          <button type="button" data-size="sm" aria-label="Small text">−</button>
+          <button type="button" data-size="md" aria-label="Normal text">অ</button>
+          <button type="button" data-size="lg" aria-label="Large text">+</button>
+        </span>
+        <button class="btn btn--ghost copy-link" type="button"><%= locale === 'en' ? 'Copy link' : 'লিংক কপি' %></button>
+        <span class="muted small" style="margin-left:auto"><%= locale === 'en' ? 'Share' : 'শেয়ার' %>:</span>
+        <span class="share-row">
+          <a class="fb" data-share="facebook" data-article="<%= article.id %>" rel="nofollow noopener" target="_blank"
+             href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(publicUrl + article.url) %>">Facebook</a>
+          <a class="x" data-share="x" data-article="<%= article.id %>" rel="nofollow noopener" target="_blank"
+             href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(publicUrl + article.url) %>&text=<%= encodeURIComponent(article.title) %>">X</a>
+          <a class="wa" data-share="whatsapp" data-article="<%= article.id %>" rel="nofollow noopener" target="_blank"
+             href="https://wa.me/?text=<%= encodeURIComponent(article.title + ' ' + publicUrl + article.url) %>">WhatsApp</a>
+          <a class="tg" data-share="telegram" data-article="<%= article.id %>" rel="nofollow noopener" target="_blank"
+             href="https://t.me/share/url?url=<%= encodeURIComponent(publicUrl + article.url) %>">Telegram</a>
+        </span>
+      </div>
+
+      <div class="correction-box" style="background:var(--paper-2);border-color:var(--line)">
+        <b><%= locale === 'en' ? 'Spotted an error?' : 'ভুল পেয়েছেন?' %></b>
+        <p style="margin:6px 0 0">
+          <%= locale === 'en'
+            ? 'We correct openly and keep the record. Write to corrections@newspulse24.com — see our '
+            : 'আমরা প্রকাশ্যে সংশোধন করি এবং রেকর্ড রাখি। লিখুন corrections@newspulse24.com — দেখুন আমাদের ' %>
+          <a href="/page/editorial-policy"><%= locale === 'en' ? 'corrections policy' : 'সংশোধন নীতিমালা' %></a>
+          · <a href="/corrections"><%= locale === 'en' ? 'all corrections' : 'সব সংশোধনী' %></a>
+        </p>
+      </div>
+
+      <%- include('partials/ad-slot', { slotId: 'after-article' }) %>
+
+      <% if (related.length) { %>
+        <div class="section-head"><h2><%= locale === 'en' ? 'Related news' : 'সম্পর্কিত সংবাদ' %></h2></div>
+        <div class="grid grid--3">
+          <% related.forEach(function (a) { %>
+            <%- include('partials/article-card', { a: a, isCompact: true }) %>
+          <% }); %>
+        </div>
+      <% } %>
+
+      <% if (commentsEnabled) { %>
+        <section class="comments" id="comments">
+          <div class="section-head">
+            <h2>💬 <%= locale === 'en' ? 'Comments' : 'মন্তব্য' %> (<%= h.bnNumber(comments.length) %>)</h2>
+          </div>
+
+          <% comments.forEach(function (c) { %>
+            <div class="comment">
+              <span class="avatar" aria-hidden="true"><%= String(c.name || '?').slice(0, 1).toUpperCase() %></span>
+              <div>
+                <b><%= c.name %></b><time datetime="<%= c.created_at %>"><%= h.timeAgo(c.created_at, locale) %></time>
+                <p><%- c.body %></p>
+              </div>
+            </div>
+          <% }); %>
+
+          <form class="form mt" id="commentForm" novalidate>
+            <input type="hidden" name="article_id" value="<%= article.id %>">
+            <div class="field-row">
+              <div>
+                <label for="cName"><%= locale === 'en' ? 'Your name' : 'আপনার নাম' %> *</label>
+                <input id="cName" name="name" required maxlength="60" autocomplete="name">
+              </div>
+              <div>
+                <label for="cEmail"><%= locale === 'en' ? 'Email (not published)' : 'ইমেইল (প্রকাশ করা হবে না)' %></label>
+                <input id="cEmail" name="email" type="email" maxlength="160" autocomplete="email">
+              </div>
+            </div>
+            <div>
+              <label for="cBody"><%= locale === 'en' ? 'Your comment' : 'আপনার মন্তব্য' %> *</label>
+              <textarea id="cBody" name="body" required maxlength="1500"></textarea>
+            </div>
+            <%# Honeypot — invisible to humans, irresistible to bots. %>
+            <div class="honeypot" aria-hidden="true">
+              <label for="cSite">Website</label>
+              <input id="cSite" name="website" tabindex="-1" autocomplete="off">
+            </div>
+            <div class="row">
+              <button class="btn" type="submit"><%= locale === 'en' ? 'Post comment' : 'মন্তব্য পাঠান' %></button>
+              <span class="form-note"><%= locale === 'en' ? 'Comments are reviewed before publishing.' : 'মন্তব্য প্রকাশের আগে পর্যালোচনা করা হয়।' %></span>
+            </div>
+            <div id="commentResult" role="status" aria-live="polite"></div>
+          </form>
+        </section>
+      <% } %>
+    </article>
+  </main>
+
+  <aside class="sidebar">
+    <%- include('partials/ad-slot', { slotId: 'sidebar-top' }) %>
+    <div class="widget">
+      <div class="widget__head">🔥 <span class="accent"><%= locale === 'en' ? 'Most read' : 'সর্বাধিক পঠিত' %></span></div>
+      <div class="widget__body">
+        <ol class="ranked">
+          <% mostRead.forEach(function (a) { %>
+            <li><a href="<%= a.url %>"><%= a.title %><span class="meta"><%= a.category || '' %> · 👁 <%= h.compactNumber(a.views) %></span></a></li>
+          <% }); %>
+        </ol>
+      </div>
+    </div>
+    <%- include('partials/ad-slot', { slotId: 'sidebar-sticky' }) %>
+    <% if (trending.length) { %>
+      <div class="widget">
+        <div class="widget__head">⚡ <%= locale === 'en' ? 'Trending' : 'ট্রেন্ডিং' %></div>
+        <div class="widget__body tagcloud">
+          <% trending.forEach(function (a) { %>
+            <a href="/news/<%= a.slug %>"><%= a.title_bn.slice(0, 28) %></a>
+          <% }); %>
+        </div>
+      </div>
+    <% } %>
+  </aside>
+</div>
+
+<%- include('partials/footer') %>

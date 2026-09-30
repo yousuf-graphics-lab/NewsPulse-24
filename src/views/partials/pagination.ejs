@@ -1,0 +1,16 @@
+<%# Pagination. Expects: page, totalPages, baseUrl (a function or string). %>
+<% if (totalPages > 1) { %>
+  <% const base = typeof baseUrl === 'function' ? baseUrl : function (p) { return baseUrl + (baseUrl.indexOf('?') > -1 ? '&' : '?') + 'page=' + p; }; %>
+  <nav class="pager" aria-label="Pagination">
+    <% if (page > 1) { %><a href="<%= base(page - 1) %>" rel="prev">‹ <%= locale === 'en' ? 'Prev' : 'পূর্ববর্তী' %></a><% } %>
+    <%
+      const from = Math.max(1, page - 2);
+      const to = Math.min(totalPages, from + 4);
+    %>
+    <% for (let p = from; p <= to; p++) { %>
+      <% if (p === page) { %><span class="current" aria-current="page"><%= h.bnNumber(p) %></span>
+      <% } else { %><a href="<%= base(p) %>"><%= h.bnNumber(p) %></a><% } %>
+    <% } %>
+    <% if (page < totalPages) { %><a href="<%= base(page + 1) %>" rel="next"><%= locale === 'en' ? 'Next' : 'পরবর্তী' %> ›</a><% } %>
+  </nav>
+<% } %>
