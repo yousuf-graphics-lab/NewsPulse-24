@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>@yousuf_lab — Custom Intros & Outros | 75s Cinematic Promo Animatic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   @yousuf_lab — "STOP USING BORING INTROS."  (75s promo animatic)
+   Scenes: 1 Hook 0-10 | 2 Intro 10-25 | 3 Showcase 25-40
+           4 Process 40-55 | 5 Why Me 55-65 | 6 CTA 65-75
+   ============================================================ */
+:root{
+  --cyan:#22d3ee; --purple:#a855f7; --magenta:#e879f9;
+  --gold:#f5c518; --red:#ef4444; --green:#22c55e; --blue:#3b82f6;
+  --ink:#04060e;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:#000;overflow:hidden;font-family:'Inter',system-ui,sans-serif;color:#fff;user-select:none}
+#app{position:fixed;inset:0;display:flex;flex-direction:column}
+#stage{position:relative;flex:1;overflow:hidden;background:#000}
+
+/* ---------- global cinematic fx ---------- */
+.lbox{position:absolute;left:0;right:0;height:5vh;background:#000;z-index:60;pointer-events:none}
+.lbox.top{top:0}.lbox.bot{bottom:0}
+#fx-scan{position:absolute;inset:0;z-index:55;pointer-events:none;opacity:.5;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
+#fx-vig{position:absolute;inset:0;z-index:54;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 52%,rgba(0,0,0,.6) 100%)}
+
+/* ---------- scenes ---------- */
+.scene{position:absolute;inset:0;display:none;align-items:center;justify-content:center;overflow:hidden}
+.scene.on{display:flex}
+
+/* ============================================================
+   SCENE 1 — THE HOOK  (0-10s)
+   ============================================================ */
+#s1{background:radial-gradient(ellipse at 50% 40%,#101435 0%,#05060f 75%)}
+#s1 .frame{position:absolute;inset:0;display:grid;place-items:center;perspective:900px;opacity:0;
+  animation:fwin 10s linear both;animation-delay:var(--d)}
+@keyframes fwin{0%{opacity:1}9.9%{opacity:1}10%{opacity:0}100%{opacity:0}}
+#s1 .frame::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 45%,rgba(34,211,238,.14),transparent 60%),
+             radial-gradient(ellipse at 60% 55%,rgba(168,85,247,.12),transparent 55%)}
+#s1 .flash{position:absolute;inset:0;background:#dff6ff;opacity:0;mix-blend-mode:screen;
+  animation:fflash 1s linear infinite;z-index:5;pointer-events:none}
+@keyframes fflash{0%{opacity:.85}5%{opacity:.25}8%,100%{opacity:0}}
+#s1 .gl{position:absolute;inset:-20px;z-index:6;pointer-events:none;mix-blend-mode:screen;opacity:0;
+  background:repeating-linear-gradient(0deg,transparent 0 13px,rgba(34,211,238,.55) 13px 14px,
+             transparent 14px 27px,rgba(168,85,247,.55) 27px 28px,transparent 28px 40px);
+  animation:gl 1s steps(1) infinite}
+@keyframes gl{0%{opacity:.9;transform:translateY(-7px)}5%{opacity:.55;transform:translateY(5px)}9%,100%{opacity:0;transform:none}}
+
+.s1-title{position:absolute;z-index:8;text-align:center;font-family:'Orbitron',sans-serif;
+  font-weight:900;font-size:clamp(28px,6.4vw,86px);letter-spacing:.04em;line-height:1.12;
+  animation:pop .45s 1.2s cubic-bezier(.2,1.6,.4,1) both}
+.s1-title span{display:inline-block;animation:jitter 2.1s steps(2) 1.2s infinite;
+  text-shadow:3px 0 rgba(232,121,249,.85),-3px 0 rgba(34,211,238,.85),0 0 34px rgba(168,85,247,.6)}
+@keyframes pop{from{opacity:0;transform:scale(1.6)}to{opacity:1;transform:scale(1)}}
+@keyframes jitter{0%,92%{transform:none}93%{transform:translate(-4px,2px) skewX(4deg)}96%{transform:translate(3px,-2px) skewX(-3deg)}100%{transform:none}}
+
+/* frame arts */
+.art{position:relative;transform-style:preserve-3d}
+.a-cube{width:17vmin;height:17vmin;animation:spin3d 2.6s linear infinite}
+.a-cube i{position:absolute;inset:0;border:2px solid var(--cyan);background:rgba(34,211,238,.09);
+  box-shadow:inset 0 0 30px rgba(34,211,238,.35)}
+.a-cube i:nth-child(1){transform:translateZ(8.5vmin)}
+.a-cube i:nth-child(2){transform:rotateY(90deg) translateZ(8.5vmin)}
+.a-cube i:nth-child(3){transform:rotateY(180deg) translateZ(8.5vmin)}
+.a-cube i:nth-child(4){transform:rotateY(-90deg) translateZ(8.5vmin)}
+.a-cube i:nth-child(5){transform:rotateX(90deg) translateZ(8.5vmin)}
+.a-cube i:nth-child(6){transform:rotateX(-90deg) translateZ(8.5vmin)}
+@keyframes spin3d{to{transform:rotateX(360deg) rotateY(360deg)}}
+
+.a-rings{width:34vmin;height:34vmin}
+.a-rings i{position:absolute;inset:0;margin:auto;border-radius:50%;border:3px solid var(--purple);
+  box-shadow:0 0 26px rgba(168,85,247,.7);animation:rpulse 1.4s ease-in-out infinite}
+.a-rings i:nth-child(1){width:100%;height:100%;border-color:var(--cyan)}
+.a-rings i:nth-child(2){width:66%;height:66%;animation-delay:.2s}
+.a-rings i:nth-child(3){width:36%;height:36%;border-color:var(--magenta);animation-delay:.4s}
+@keyframes rpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+
+.a-orb{width:26vmin;height:26vmin;border-radius:50%;
+  background:radial-gradient(circle at 32% 28%,#c4f6ff,#22d3ee 38%,#1e1b4b 78%,#0b0620);
+  box-shadow:0 0 70px rgba(34,211,238,.65);animation:opulse 1.1s ease-in-out infinite}
+@keyframes opulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+
+.a-pyramid{width:0;height:0;border-left:13vmin solid transparent;border-right:13vmin solid transparent;
+  border-bottom:22vmin solid rgba(168,85,247,.85);filter:drop-shadow(0 0 30px rgba(168,85,247,.8));
+  animation:pspin 1.6s linear infinite}
+@keyframes pspin{to{transform:rotateY(360deg)}}
+
+.a-eq{display:flex;gap:1.6vmin;align-items:center;height:24vmin}
+.a-eq i{width:2.6vmin;height:100%;border-radius:2vmin;
+  background:linear-gradient(180deg,var(--magenta),var(--cyan));
+  box-shadow:0 0 18px rgba(34,211,238,.6);animation:eq .7s ease-in-out infinite alternate;transform-origin:bottom}
+.a-eq i:nth-child(1){animation-delay:.00s}.a-eq i:nth-child(2){animation-delay:.12s}
+.a-eq i:nth-child(3){animation-delay:.24s}.a-eq i:nth-child(4){animation-delay:.36s}
+.a-eq i:nth-child(5){animation-delay:.05s}.a-eq i:nth-child(6){animation-delay:.30s}
+.a-eq i:nth-child(7){animation-delay:.18s}.a-eq i:nth-child(8){animation-delay:.42s}
+.a-eq i:nth-child(9){animation-delay:.09s}
+@keyframes eq{from{transform:scaleY(.18)}to{transform:scaleY(1)}}
+
+.a-hex{width:26vmin;height:26vmin;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+  background:linear-gradient(135deg,#312e81,#a855f7 60%,#e879f9);
+  animation:hpulse 1.2s ease-in-out infinite;filter:drop-shadow(0 0 34px rgba(168,85,247,.85))}
+@keyframes hpulse{0%,100%{transform:rotate(0) scale(1)}50%{transform:rotate(8deg) scale(1.1)}}
+
+.a-orbit{width:30vmin;height:30vmin;border:2px solid rgba(34,211,238,.75);border-radius:50%;
+  box-shadow:0 0 26px rgba(34,211,238,.4);animation:orb 1.5s linear infinite;position:relative}
+.a-orbit::before{content:"";position:absolute;inset:0;margin:auto;width:7vmin;height:7vmin;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--cyan));box-shadow:0 0 30px var(--cyan)}
+.a-orbit::after{content:"";position:absolute;top:-1.6vmin;left:50%;width:3.2vmin;height:3.2vmin;margin-left:-1.6vmin;
+  border-radius:50%;background:var(--magenta);box-shadow:0 0 22px var(--magenta)}
+@keyframes orb{to{transform:rotate(360deg)}}
+
+.a-grid{width:100%;height:100%;position:absolute;inset:0;overflow:hidden}
+.a-grid::before{content:"";position:absolute;left:-50%;right:-50%;top:42%;bottom:-60%;
+  background:repeating-linear-gradient(90deg,rgba(34,211,238,.55) 0 2px,transparent 2px 60px),
+             repeating-linear-gradient(0deg,rgba(168,85,247,.55) 0 2px,transparent 2px 46px);
+  transform:perspective(400px) rotateX(62deg);transform-origin:top;animation:gmove 1.2s linear infinite}
+@keyframes gmove{to{background-position:0 46px,0 0}}
+.a-grid::after{content:"";position:absolute;left:0;right:0;top:34%;height:12%;
+  background:linear-gradient(180deg,transparent,rgba(232,121,249,.9),transparent);filter:blur(6px)}
+
+.a-rays{width:38vmin;height:38vmin;border-radius:50%;
+  background:conic-gradient(from 0deg,var(--cyan) 0 8deg,transparent 8deg 30deg,var(--purple) 30deg 38deg,
+    transparent 38deg 60deg,var(--magenta) 60deg 68deg,transparent 68deg 90deg,var(--cyan) 90deg 98deg,
+    transparent 98deg 120deg,var(--purple) 120deg 128deg,transparent 128deg 150deg,var(--magenta) 150deg 158deg,
+    transparent 158deg 180deg,var(--cyan) 180deg 188deg,transparent 188deg 210deg,var(--purple) 210deg 218deg,
+    transparent 218deg 240deg,var(--magenta) 240deg 248deg,transparent 248deg 270deg,var(--cyan) 270deg 278deg,
+    transparent 278deg 300deg,var(--purple) 300deg 308deg,transparent 308deg 330deg,var(--magenta) 330deg 338deg,transparent 338deg 360deg);
+  animation:rayspin 1.4s linear infinite;filter:blur(.4px) drop-shadow(0 0 22px rgba(34,211,238,.5))}
+@keyframes rayspin{to{transform:rotate(360deg)}}
+
+.a-yl{font-family:'Orbitron',sans-serif;font-weight:900;font-size:24vmin;letter-spacing:.02em;
+  background:linear-gradient(180deg,#e0f2fe,var(--cyan) 45%,var(--purple));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 30px rgba(34,211,238,.8));animation:ylflash .5s steps(2) infinite alternate}
+@keyframes ylflash{from{transform:scale(1)}to{transform:scale(1.06)}}
+
+/* ============================================================
+   SCENE 2 — THE INTRODUCTION  (10-25s)  digital tunnel → laptop
+   ============================================================ */
+#s2{background:radial-gradient(ellipse at center,#0a1030 0%,#04050d 72%)}
+.tunnel{position:absolute;inset:0;perspective:520px;overflow:hidden;animation:tunnelOut 1s 10.6s ease forwards}
+@keyframes tunnelOut{to{opacity:.12;transform:scale(1.25)}}
+.ring{position:absolute;left:50%;top:50%;width:76vmax;height:76vmax;margin:-38vmax 0 0 -38vmax;
+  border:2px solid var(--cyan);border-radius:16%;opacity:0;box-shadow:0 0 20px rgba(34,211,238,.35);
+  animation:fly 4.6s linear infinite;animation-delay:var(--d)}
+.ring.p{border-color:var(--purple);box-shadow:0 0 20px rgba(168,85,247,.35);border-radius:50%}
+@keyframes fly{0%{transform:translateZ(-1700px) rotate(0deg);opacity:0}
+  14%{opacity:.95}78%{opacity:.95}100%{transform:translateZ(340px) rotate(22deg);opacity:0}}
+.stream{position:absolute;width:3px;height:16vmin;border-radius:3px;
+  background:linear-gradient(180deg,transparent,var(--cyan));opacity:0;
+  animation:fly2 2.3s linear infinite;animation-delay:var(--d)}
+.stream.p{background:linear-gradient(180deg,transparent,var(--magenta))}
+@keyframes fly2{0%{transform:translateZ(-1200px);opacity:0}18%{opacity:.9}80%{opacity:.9}
+  100%{transform:translateZ(280px);opacity:0}}
+
+.laptop{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.55);opacity:0;z-index:4;
+  animation:laptopIn 1.3s 11.2s cubic-bezier(.2,1.2,.3,1) forwards}
+@keyframes laptopIn{to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.l-screen{width:52vmin;height:32vmin;border:5px solid #232c44;border-bottom-width:8px;border-radius:14px;
+  background:radial-gradient(ellipse at 50% 30%,#0c1633,#04070f 75%);
+  box-shadow:0 0 70px rgba(34,211,238,.3),inset 0 0 40px rgba(34,211,238,.12);
+  display:grid;place-items:center;overflow:hidden}
+.l-base{width:118%;height:2.2vmin;margin-left:-9%;border-radius:0 0 14px 14px;
+  background:linear-gradient(180deg,#33405f,#101527);box-shadow:0 18px 40px rgba(0,0,0,.7)}
+.logo-hex{width:11vmin;height:11vmin;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+  background:linear-gradient(135deg,var(--cyan),var(--purple));display:grid;place-items:center;
+  font-family:'Orbitron';font-weight:900;font-size:5vmin;color:#04101a;animation:hpulse 1.6s ease-in-out infinite}
+.l-brand{margin-top:1.4vmin;font-family:'Orbitron';font-weight:700;font-size:1.9vmin;letter-spacing:.45em;
+  color:#9be9ff;text-shadow:0 0 14px rgba(34,211,238,.8)}
+.l-pulse{position:absolute;width:16vmin;height:16vmin;border:2px solid rgba(34,211,238,.7);border-radius:50%;
+  animation:lgpulse 1.8s ease-out 12s infinite;opacity:0}
+@keyframes lgpulse{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+
+.s2-copy{position:absolute;left:0;right:0;bottom:12%;z-index:6;text-align:center;padding:0 4vw}
+.s2-copy .l1,.s2-copy .l2{font-family:'Orbitron',sans-serif;font-weight:700;letter-spacing:.06em;
+  font-size:clamp(17px,3.1vw,40px);text-shadow:0 0 24px rgba(34,211,238,.55)}
+.s2-copy .l1{animation:riseIn .7s 2s both}
+.s2-copy .l2{animation:riseIn .7s 3.2s both;color:#c4b5fd;text-shadow:0 0 24px rgba(168,85,247,.6);margin-top:.4em}
+@keyframes riseIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+
+/* ============================================================
+   SCENE 3 — SHOWCASE  (25-40s)  tri-split gaming/corporate/vlog
+   ============================================================ */
+#s3{background:#05060f;flex-direction:column}
+.splits{position:absolute;inset:6vh 0;display:flex;gap:1.2vmin;padding:1.2vmin}
+.panel{flex:1;border-radius:2vmin;position:relative;overflow:hidden;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2.4vmin;transform:scaleX(0);
+  animation:panelIn .6s cubic-bezier(.2,1.3,.4,1) forwards;animation-delay:var(--d)}
+@keyframes panelIn{from{transform:scaleX(0);opacity:0}to{transform:scaleX(1);opacity:1}}
+.panel::after{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.14),transparent 42%)}
+.p-tag{font-family:'Orbitron';font-weight:900;font-size:clamp(15px,2.6vmin,34px);letter-spacing:.28em;z-index:2}
+.p-sub{font-size:clamp(10px,1.6vmin,16px);letter-spacing:.18em;opacity:.85;z-index:2}
+
+.panel.gaming{background:radial-gradient(ellipse at 50% 30%,#7f1d1d,#2b0508 70%),#200;box-shadow:inset 0 0 60px rgba(239,68,68,.35)}
+.panel.gaming .p-tag{color:#fecaca;text-shadow:0 0 18px rgba(239,68,68,.9)}
+.crosshair{width:16vmin;height:16vmin;position:relative;z-index:2;animation:chPulse 1.2s ease-in-out infinite}
+.crosshair::before,.crosshair::after{content:"";position:absolute;background:#ef4444;box-shadow:0 0 16px #ef4444}
+.crosshair::before{left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px}
+.crosshair::after{top:50%;left:0;right:0;height:3px;margin-top:-1.5px}
+.crosshair i{position:absolute;inset:18%;border:2.5px solid #ef4444;border-radius:50%;box-shadow:0 0 18px rgba(239,68,68,.8)}
+@keyframes chPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.p-name{z-index:2;font-family:'Orbitron';font-weight:700;font-size:clamp(11px,1.9vmin,20px);color:#fca5a5;
+  border:1.5px solid rgba(239,68,68,.7);padding:.6em 1.3em;letter-spacing:.24em;animation:flk 2s steps(2) infinite}
+@keyframes flk{0%,88%{opacity:1}92%{opacity:.35}96%,100%{opacity:1}}
+
+.panel.corp{background:radial-gradient(ellipse at 50% 28%,#1e3a8a,#060b1f 72%);box-shadow:inset 0 0 60px rgba(59,130,246,.3)}
+.panel.corp .p-tag{color:#bfdbfe;text-shadow:0 0 18px rgba(59,130,246,.9)}
+.corp-logo{z-index:2;width:15vmin;height:15vmin}
+.corp-logo svg{width:100%;height:100%;overflow:visible}
+.corp-logo path{fill:none;stroke:#60a5fa;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:420;stroke-dashoffset:420;animation:draw 2.6s 2.4s ease forwards;filter:drop-shadow(0 0 12px rgba(96,165,250,.9))}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+.panel.vlog{background:radial-gradient(ellipse at 50% 30%,#14532d,#04170b 72%);box-shadow:inset 0 0 60px rgba(34,197,94,.3)}
+.panel.vlog .p-tag{color:#bbf7d0;text-shadow:0 0 18px rgba(34,197,94,.9)}
+.playbtn{z-index:2;width:15vmin;height:10vmin;border:3px solid #4ade80;border-radius:2vmin;display:grid;
+  place-items:center;box-shadow:0 0 26px rgba(34,197,94,.6);animation:bnc 1.4s ease-in-out infinite}
+.playbtn::before{content:"";width:0;height:0;border-left:4.4vmin solid #4ade80;border-top:2.7vmin solid transparent;
+  border-bottom:2.7vmin solid transparent;margin-left:.8vmin;filter:drop-shadow(0 0 10px #4ade80)}
+@keyframes bnc{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.2vmin)}}
+.vprog{z-index:2;width:60%;height:.9vmin;border-radius:1vmin;background:rgba(187,247,208,.22);overflow:hidden}
+.vprog i{display:block;height:100%;width:0;background:#4ade80;box-shadow:0 0 12px #4ade80;animation:vfill 5s 3s linear forwards}
+@keyframes vfill{to{width:100%}}
+
+.s3-copy{position:absolute;left:0;right:0;bottom:9%;z-index:8;text-align:center;font-family:'Orbitron';font-weight:900}
+.s3-copy b{display:inline-block;font-size:clamp(18px,3.4vw,46px);margin:0 .35em;letter-spacing:.05em;opacity:0}
+.s3-copy b:nth-child(1){color:#f87171;text-shadow:0 0 22px rgba(239,68,68,.8);animation:pop .4s 2s both}
+.s3-copy b:nth-child(2){color:#60a5fa;text-shadow:0 0 22px rgba(59,130,246,.8);animation:pop .4s 3.1s both}
+.s3-copy b:nth-child(3){color:#4ade80;text-shadow:0 0 22px rgba(34,197,94,.8);animation:pop .4s 4.2s both}
+.s3-copy .any{display:block;font-size:clamp(13px,2.2vw,28px);letter-spacing:.3em;color:#e2e8f0;margin-top:.8em;
+  animation:riseIn .7s 6.2s both;text-shadow:0 0 18px rgba(255,255,255,.35)}
+
+/* ============================================================
+   SCENE 4 — THE PROCESS  (40-55s)  editor UI simulation
+   ============================================================ */
+#s4{background:radial-gradient(ellipse at 50% 20%,#0d1226,#04050c 70%)}
+.editor{position:relative;width:min(88vw,120vmin);height:min(66vh,72vmin);background:#0a0f1e;
+  border:1px solid #1f2a44;border-radius:14px;box-shadow:0 30px 80px rgba(0,0,0,.75),0 0 60px rgba(34,211,238,.12);
+  display:flex;flex-direction:column;overflow:hidden;animation:riseIn .8s .3s both}
+.ed-top{height:6.4%;display:flex;align-items:center;gap:9px;padding:0 14px;background:#0d1428;border-bottom:1px solid #1f2a44}
+.ed-top i{width:11px;height:11px;border-radius:50%}
+.ed-top i:nth-child(1){background:#ef4444}.ed-top i:nth-child(2){background:#f59e0b}.ed-top i:nth-child(3){background:#22c55e}
+.ed-top span{margin-left:12px;font-size:clamp(9px,1.3vmin,13px);letter-spacing:.14em;color:#64748b}
+.ed-mid{flex:1;display:flex;min-height:0}
+.ed-left{width:24%;padding:2.4vmin;border-right:1px solid #1f2a44;display:flex;flex-direction:column;gap:3vmin;justify-content:center}
+.sl{position:relative;height:1.1vmin;border-radius:1vmin;background:#1e293b}
+.sl::before{content:"";position:absolute;left:0;top:0;bottom:0;border-radius:1vmin;width:var(--fill,30%);
+  background:linear-gradient(90deg,var(--cyan),var(--purple))}
+.sl i{position:absolute;top:50%;left:var(--fill,30%);width:2.4vmin;height:2.4vmin;margin:-1.2vmin 0 0 -1.2vmin;
+  border-radius:50%;background:#e2f6ff;box-shadow:0 0 14px rgba(34,211,238,.9)}
+.sl.main{--fill:14%}
+.sl.main i{animation:handle 3.2s 3.4s cubic-bezier(.4,.1,.3,1) forwards}
+.sl.main::before{animation:fillgrow 3.2s 3.4s cubic-bezier(.4,.1,.3,1) forwards}
+@keyframes handle{to{left:78%}}
+@keyframes fillgrow{to{width:78%}}
+.sl-lab{font-size:clamp(8px,1.2vmin,12px);letter-spacing:.24em;color:#475569;margin-bottom:1vmin}
+.ed-preview{flex:1;position:relative;display:grid;place-items:center;overflow:hidden;
+  background:linear-gradient(140deg,#0e7490,#6d28d9);animation:hueShift 3.2s 3.4s linear forwards}
+@keyframes hueShift{to{filter:hue-rotate(150deg) saturate(1.25)}}
+.logo3d{font-family:'Orbitron';font-weight:900;font-size:clamp(30px,8vmin,90px);letter-spacing:.06em;color:#fff;
+  text-shadow:0 0 30px rgba(255,255,255,.7),0 0 70px rgba(34,211,238,.8);
+  opacity:0;transform:rotateY(900deg) scale(.3);animation:spinIn 2s 8s cubic-bezier(.2,1.4,.3,1) forwards}
+@keyframes spinIn{60%{opacity:1}to{opacity:1;transform:rotateY(0) scale(1)}}
+.ed-timeline{height:16%;display:flex;align-items:center;gap:1%;padding:0 2%;background:#0b1120;border-top:1px solid #1f2a44;position:relative}
+.clip{height:52%;border-radius:6px;opacity:.9;box-shadow:0 0 14px rgba(0,0,0,.5) inset}
+.clip.c1{width:16%;background:linear-gradient(90deg,#22d3ee,#0891b2)}
+.clip.c2{width:24%;background:linear-gradient(90deg,#a855f7,#6d28d9)}
+.clip.c3{width:12%;background:linear-gradient(90deg,#e879f9,#a21caf)}
+.clip.c4{width:30%;background:linear-gradient(90deg,#f5c518,#b45309)}
+.playhead{position:absolute;top:8%;bottom:8%;width:2px;background:#f8fafc;box-shadow:0 0 12px #fff;left:6%;
+  animation:ph 12s 1.2s linear forwards}
+@keyframes ph{to{left:95%}}
+.cursor{position:absolute;z-index:9;width:0;height:0;border-left:2.4vmin solid #fff;border-right:1.1vmin solid transparent;
+  border-bottom:1.1vmin solid transparent;border-top:2vmin solid transparent;transform:rotate(-14deg);
+  filter:drop-shadow(0 0 10px rgba(34,211,238,.95));left:70%;top:60%;
+  animation:curMove 11s 1s ease-in-out forwards;opacity:0}
+@keyframes curMove{
+  0%{opacity:0;left:70%;top:62%}
+  8%{opacity:1}
+  18%{left:16%;top:34%}
+  30%{left:15%;top:33%}
+  58%{left:22%;top:33%}
+  72%{left:52%;top:52%}
+  86%{left:52%;top:50%}
+  100%{opacity:1;left:52%;top:50%}}
+.steps{position:absolute;right:2.5vmin;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2vmin;z-index:10}
+.step{display:flex;align-items:center;gap:1.4vmin;opacity:0;animation:slideL .5s var(--d) cubic-bezier(.2,1.3,.4,1) forwards;
+  background:rgba(4,8,20,.72);border:1px solid rgba(34,211,238,.35);border-radius:12px;padding:1.2vmin 1.8vmin;backdrop-filter:blur(4px)}
+@keyframes slideL{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:none}}
+.step b{font-family:'Orbitron';font-weight:900;font-size:clamp(12px,2vmin,22px);color:#031018;background:var(--cyan);
+  width:3.4vmin;height:3.4vmin;min-width:26px;min-height:26px;border-radius:50%;display:grid;place-items:center;
+  box-shadow:0 0 14px rgba(34,211,238,.8)}
+.step span{font-family:'Orbitron';font-weight:700;font-size:clamp(10px,1.7vmin,18px);letter-spacing:.1em}
+
+/* ============================================================
+   SCENE 5 — WHY CHOOSE ME  (55-65s)  gold checks
+   ============================================================ */
+#s5{background:radial-gradient(ellipse at 50% 30%,#1c1503 0%,#080602 55%,#020202 100%)}
+#s5::before{content:"";position:absolute;left:50%;top:26%;width:60vmin;height:60vmin;transform:translateX(-50%);
+  background:radial-gradient(circle,rgba(245,197,24,.16),transparent 62%);filter:blur(10px)}
+.s5-head{position:absolute;top:14%;left:0;right:0;text-align:center;font-family:'Orbitron';font-weight:900;
+  font-size:clamp(16px,3vw,40px);letter-spacing:.3em;color:var(--gold);
+  text-shadow:0 0 26px rgba(245,197,24,.65);animation:riseIn .7s .4s both}
+.checks{display:flex;flex-direction:column;gap:4.4vmin;z-index:3}
+.crow{display:flex;align-items:center;gap:2.4vmin;opacity:0;animation:pop .5s var(--d) cubic-bezier(.2,1.5,.4,1) forwards}
+.crow svg{width:clamp(34px,6vmin,64px);height:clamp(34px,6vmin,64px);overflow:visible}
+.crow circle{fill:rgba(245,197,24,.08);stroke:var(--gold);stroke-width:3.5;stroke-dasharray:164;stroke-dashoffset:164;
+  animation:draw .7s var(--d) ease forwards;filter:drop-shadow(0 0 10px rgba(245,197,24,.8))}
+.crow path{fill:none;stroke:var(--gold);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:60;stroke-dashoffset:60;animation:draw .45s calc(var(--d) + .55s) ease forwards;
+  filter:drop-shadow(0 0 8px rgba(245,197,24,.9))}
+.crow span{font-family:'Orbitron';font-weight:700;font-size:clamp(16px,3.4vmin,42px);letter-spacing:.14em;color:#fef3c7;
+  text-shadow:0 0 20px rgba(245,197,24,.45)}
+.s5-part{position:absolute;bottom:-4vh;width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:0;
+  box-shadow:0 0 10px rgba(245,197,24,.9);animation:floatUp var(--dur) linear var(--del) infinite}
+@keyframes floatUp{0%{transform:translateY(0);opacity:0}12%{opacity:.9}85%{opacity:.5}100%{transform:translateY(-105vh);opacity:0}}
+
+/* ============================================================
+   SCENE 6 — OUTRO & CTA  (65-75s)
+   ============================================================ */
+#s6{background:radial-gradient(ellipse at 50% 38%,#0b1233 0%,#050816 55%,#010208 100%)}
+.s6-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:4vmin;z-index:4;text-align:center}
+.cta-btn{position:relative;font-family:'Orbitron';font-weight:900;font-size:clamp(20px,4.2vmin,52px);letter-spacing:.22em;
+  color:#eafcff;padding:1em 2.6em;border-radius:18px;cursor:pointer;
+  border:2px solid rgba(56,189,248,.9);background:linear-gradient(180deg,rgba(14,42,84,.85),rgba(3,10,28,.9));
+  box-shadow:0 0 34px rgba(56,189,248,.5),inset 0 0 26px rgba(56,189,248,.22);
+  opacity:0;transform:scale(.6);animation:ctaIn .8s .8s cubic-bezier(.2,1.5,.4,1) forwards,ctaGlow 1.7s 1.6s ease-in-out infinite}
+@keyframes ctaIn{to{opacity:1;transform:scale(1)}}
+@keyframes ctaGlow{0%,100%{box-shadow:0 0 34px rgba(56,189,248,.5),inset 0 0 26px rgba(56,189,248,.22)}
+  50%{box-shadow:0 0 70px rgba(56,189,248,.95),inset 0 0 40px rgba(56,189,248,.4)}}
+.cta-ring{position:absolute;left:50%;top:50%;width:100%;height:100%;border:2px solid rgba(125,211,252,.9);
+  border-radius:18px;transform:translate(-50%,-50%);opacity:0;pointer-events:none}
+.cta-ring.go{animation:ringX 1s ease-out forwards}
+@keyframes ringX{0%{opacity:.9;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.7)}}
+.cta-btn.pressed{animation:btnPress .55s ease forwards}
+@keyframes btnPress{0%{transform:scale(1)}35%{transform:scale(.9)}100%{transform:scale(1)}}
+.handle{font-family:'Orbitron';font-weight:700;font-size:clamp(15px,2.8vmin,34px);letter-spacing:.3em;color:#7dd3fc;
+  text-shadow:0 0 22px rgba(56,189,248,.75);opacity:0;animation:riseIn .8s 2.6s both}
+.s6-part{position:absolute;bottom:-3vh;border-radius:50%;opacity:0;animation:floatUp var(--dur) linear var(--del) infinite}
+.s6-hint{position:absolute;bottom:9%;left:0;right:0;text-align:center;font-size:clamp(9px,1.4vmin,14px);
+  letter-spacing:.42em;color:#334155;opacity:0;animation:riseIn 1s 4.5s both}
+
+/* ============================================================
+   HUD / CONTROLS / OVERLAYS
+   ============================================================ */
+#hud{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:10px 16px;background:#07090f;
+  border-top:1px solid #16203a;z-index:80;flex-wrap:wrap}
+#hud button{background:#0e1830;border:1px solid #22345c;color:#cbe9ff;border-radius:8px;padding:7px 13px;
+  font-family:'Inter';font-weight:600;font-size:13px;cursor:pointer;letter-spacing:.04em}
+#hud button:hover{background:#16244a;border-color:#3b82f6}
+#hud button.hot{background:#0c2f4a;border-color:#22d3ee;color:#aef3ff}
+#time{font-variant-numeric:tabular-nums;font-size:13px;color:#7dd3fc;min-width:86px;text-align:center}
+#track{flex:1 1 220px;min-width:180px;height:14px;border-radius:8px;background:#0d1526;position:relative;cursor:pointer;
+  border:1px solid #1c2a4a}
+#fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:8px;
+  background:linear-gradient(90deg,var(--cyan),var(--purple),var(--magenta))}
+.mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:#3b537f;border-radius:2px}
+#chips{display:flex;gap:6px;flex-wrap:wrap}
+#chips button{padding:5px 9px;font-size:11px;letter-spacing:.08em}
+#chips button.live{background:#123c5c;border-color:#22d3ee;color:#d9fbff}
+
+.overlay{position:absolute;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;background:radial-gradient(ellipse at center,rgba(7,11,30,.9),rgba(1,2,8,.97));backdrop-filter:blur(6px);cursor:pointer}
+.overlay h2{font-family:'Orbitron';font-weight:900;font-size:clamp(20px,4vw,52px);letter-spacing:.12em;
+  background:linear-gradient(90deg,var(--cyan),var(--purple));-webkit-background-clip:text;background-clip:text;color:transparent}
+.overlay p{color:#94a3b8;font-size:clamp(12px,1.5vw,16px);letter-spacing:.12em;text-align:center;padding:0 20px}
+.bigplay{width:92px;height:92px;border-radius:50%;border:2px solid var(--cyan);display:grid;place-items:center;
+  box-shadow:0 0 44px rgba(34,211,238,.55);animation:ctaGlow 1.8s ease-in-out infinite}
+.bigplay::before{content:"";width:0;height:0;border-left:30px solid #aef3ff;border-top:19px solid transparent;
+  border-bottom:19px solid transparent;margin-left:8px}
+#ov-end{display:none}
+#ov-end .bigplay::before{border-left-color:var(--gold)}
+.credit{font-size:12px;letter-spacing:.35em;color:#64748b}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <!-- SCENE 1 : HOOK -->
+    <section class="scene" id="s1">
+      <div id="frames"></div>
+      <div class="flash"></div>
+      <div class="gl"></div>
+      <h1 class="s1-title"><span>STOP USING<br>BORING INTROS.</span></h1>
+    </section>
+
+    <!-- SCENE 2 : INTRO -->
+    <section class="scene" id="s2">
+      <div class="tunnel" id="tunnel"></div>
+      <div class="laptop">
+        <div class="l-screen">
+          <div class="l-pulse"></div>
+          <div class="logo-hex">Y</div>
+          <div class="l-brand">YOUR BRAND</div>
+        </div>
+        <div class="l-base"></div>
+      </div>
+      <div class="s2-copy">
+        <div class="l1">I CREATE CUSTOM INTROS &amp; OUTROS</div>
+        <div class="l2">THAT MAKE YOUR BRAND STAND OUT.</div>
+      </div>
+    </section>
+
+    <!-- SCENE 3 : SHOWCASE -->
+    <section class="scene" id="s3">
+      <div class="splits">
+        <div class="panel gaming" style="--d:.3s">
+          <div class="crosshair"><i></i></div>
+          <div class="p-tag">GAMING</div>
+          <div class="p-name">PLAYER ONE — ESPORTS INTRO</div>
+        </div>
+        <div class="panel corp" style="--d:1s">
+          <div class="corp-logo"><svg viewBox="0 0 100 100">
+            <path d="M50 8 L88 30 L88 70 L50 92 L12 70 L12 30 Z M50 30 L68 40 L68 60 L50 70 L32 60 L32 40 Z"/>
+          </svg></div>
+          <div class="p-tag">CORPORATE</div>
+          <div class="p-sub">MINIMAL LOGO REVEAL</div>
+        </div>
+        <div class="panel vlog" style="--d:1.7s">
+          <div class="playbtn"></div>
+          <div class="p-tag">VLOGS</div>
+          <div class="vprog"><i></i></div>
+          <div class="p-sub">SUBSCRIBE-READY OUTRO</div>
+        </div>
+      </div>
+      <div class="s3-copy">
+        <b>GAMING.</b><b>CORPORATE.</b><b>VLOGS.</b>
+        <span class="any">ANY STYLE YOU NEED.</span>
+      </div>
+    </section>
+
+    <!-- SCENE 4 : PROCESS -->
+    <section class="scene" id="s4">
+      <div class="editor">
+        <div class="ed-top"><i></i><i></i><i></i><span>YL STUDIO — client_logo_final_v3.ylp</span></div>
+        <div class="ed-mid">
+          <div class="ed-left">
+            <div><div class="sl-lab">COLOR GRADE</div><div class="sl main"><i></i></div></div>
+            <div><div class="sl-lab">GLOW</div><div class="sl" style="--fill:62%"><i></i></div></div>
+            <div><div class="sl-lab">SPEED</div><div class="sl" style="--fill:44%"><i></i></div></div>
+          </div>
+          <div class="ed-preview"><div class="logo3d">LOGO</div></div>
+        </div>
+        <div class="ed-timeline">
+          <div class="clip c1"></div><div class="clip c2"></div><div class="clip c3"></div><div class="clip c4"></div>
+          <div class="playhead"></div>
+        </div>
+        <div class="cursor"></div>
+      </div>
+      <div class="steps">
+        <div class="step" style="--d:1.6s"><b>1</b><span>SEND ME YOUR LOGO</span></div>
+        <div class="step" style="--d:5.4s"><b>2</b><span>I DESIGN</span></div>
+        <div class="step" style="--d:9s"><b>3</b><span>YOU GET PERFECTION</span></div>
+      </div>
+    </section>
+
+    <!-- SCENE 5 : WHY CHOOSE ME -->
+    <section class="scene" id="s5">
+      <div class="s5-head">WHY CHOOSE ME?</div>
+      <div class="checks">
+        <div class="crow" style="--d:1s">
+          <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26"/><path d="M18 31 l8 8 l17 -19"/></svg>
+          <span>UNLIMITED REVISIONS</span>
+        </div>
+        <div class="crow" style="--d:3.2s">
+          <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26"/><path d="M18 31 l8 8 l17 -19"/></svg>
+          <span>24H DELIVERY</span>
+        </div>
+        <div class="crow" style="--d:5.4s">
+          <svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26"/><path d="M18 31 l8 8 l17 -19"/></svg>
+          <span>100% SATISFACTION</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCENE 6 : OUTRO / CTA -->
+    <section class="scene" id="s6">
+      <div class="s6-wrap">
+        <button class="cta-btn" id="cta">ORDER NOW<div class="cta-ring" id="ctaRing"></div></button>
+        <div class="handle">@yousuf_lab</div>
+      </div>
+      <div class="s6-hint">CUSTOM INTROS · OUTROS · LOGO REVEALS</div>
+    </section>
+
+    <div id="fx-vig"></div>
+    <div id="fx-scan"></div>
+    <div class="lbox top"></div>
+    <div class="lbox bot"></div>
+
+    <!-- overlays -->
+    <div class="overlay" id="ov-start">
+      <h2>@yousuf_lab — PROMO ANIMATIC</h2>
+      <div class="bigplay"></div>
+      <p>75 SECONDS · 6 SCENES · CINEMATIC / FUTURISTIC / HIGH-ENERGY<br>▶ click to play with sound</p>
+      <div class="credit">HOOK → INTRO → SHOWCASE → PROCESS → WHY ME → CTA</div>
+    </div>
+    <div class="overlay" id="ov-end">
+      <h2>THAT'S THE PITCH.</h2>
+      <div class="bigplay" id="btn-replay"></div>
+      <p>REPLAY THE ANIMATIC · OR GO MAKE THE REAL ONE</p>
+      <div class="credit">@yousuf_lab</div>
+    </div>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud">
+    <button id="btn-play">▶ PLAY</button>
+    <button id="btn-restart">⟲</button>
+    <span id="time">0:00 / 1:15</span>
+    <div id="track"><div id="fill"></div></div>
+    <button id="btn-sound">🔊 SOUND ON</button>
+    <div id="chips"></div>
+  </div>
+</div>
+
+<script>
+/* ================= TIMELINE ================= */
+const DUR = 75;
+const SCENES = [
+  {id:'s1', start:0,  end:10, label:'01 HOOK'},
+  {id:'s2', start:10, end:25, label:'02 INTRO'},
+  {id:'s3', start:25, end:40, label:'03 SHOWCASE'},
+  {id:'s4', start:40, end:55, label:'04 PROCESS'},
+  {id:'s5', start:55, end:65, label:'05 WHY ME'},
+  {id:'s6', start:65, end:75, label:'06 CTA'},
+];
+const sceneAt = t => SCENES.findIndex(s => t >= s.start && t < s.end);
+
+let t = 0, prevT = 0, playing = false, lastRAF = 0, curScene = -1, lastStep = -1;
+let soundOn = true;
+
+/* ================= BUILD DECOR ================= */
+(function build(){
+  // Scene 1: ten 1-second intro flashes
+  const arts = [
+    '<div class="art a-cube"><i></i><i></i><i></i><i></i><i></i><i></i></div>',
+    '<div class="art a-rings"><i></i><i></i><i></i></div>',
+    '<div class="art a-orb"></div>',
+    '<div class="art a-pyramid"></div>',
+    '<div class="art a-eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>',
+    '<div class="art a-hex"></div>',
+    '<div class="art a-orbit"></div>',
+    '<div class="art a-grid"></div>',
+    '<div class="art a-rays"></div>',
+    '<div class="art a-yl">YL</div>',
+  ];
+  const fr = document.getElementById('frames');
+  arts.forEach((a,i)=>{
+    const d = document.createElement('div');
+    d.className = 'frame'; d.style.setProperty('--d', i+'s');
+    d.innerHTML = a; fr.appendChild(d);
+  });
+
+  // Scene 2: tunnel rings + data streams
+  const tn = document.getElementById('tunnel');
+  for(let i=0;i<12;i++){
+    const r = document.createElement('div');
+    r.className = 'ring' + (i%2 ? ' p':'');
+    r.style.setProperty('--d', (-i*0.38)+'s');
+    tn.appendChild(r);
+  }
+  for(let i=0;i<20;i++){
+    const s = document.createElement('div');
+    s.className = 'stream' + (i%2 ? ' p':'');
+    s.style.left = (4+Math.random()*92)+'%';
+    s.style.top  = (4+Math.random()*86)+'%';
+    s.style.setProperty('--d', (-Math.random()*2.3)+'s');
+    tn.appendChild(s);
+  }
+
+  // Scene 5 + 6: floating particles
+  function parts(host, cls, n, colors){
+    for(let i=0;i<n;i++){
+      const p = document.createElement('i');
+      p.className = cls;
+      const sz = 3+Math.random()*5;
+      p.style.left = (Math.random()*100)+'%';
+      p.style.width = p.style.height = sz+'px';
+      p.style.background = colors[i%colors.length];
+      p.style.boxShadow = `0 0 ${8+sz}px ${colors[i%colors.length]}`;
+      p.style.setProperty('--dur',(7+Math.random()*9)+'s');
+      p.style.setProperty('--del',(-Math.random()*14)+'s');
+      host.appendChild(p);
+    }
+  }
+  parts(document.getElementById('s5'),'s5-part',14,['#f5c518','#fde68a']);
+  parts(document.getElementById('s6'),'s6-part',26,['#22d3ee','#7dd3fc','#a855f7','#f5c518']);
+
+  // HUD chips + markers
+  const chips = document.getElementById('chips');
+  SCENES.forEach((s,i)=>{
+    const b = document.createElement('button');
+    b.textContent = s.label; b.dataset.i = i;
+    b.onclick = ()=> seek(s.start + .02);
+    chips.appendChild(b);
+    if(i>0){
+      const m = document.createElement('div');
+      m.className='mark'; m.style.left = (s.start/DUR*100)+'%';
+      document.getElementById('track').appendChild(m);
+    }
+  });
+})();
+
+/* ================= AUDIO ENGINE (WebAudio, all synthesized) ================= */
+let AC=null, master, musicBus, sfxBus, noiseBuf;
+function initAudio(){
+  if(AC) return;
+  AC = new (window.AudioContext||window.webkitAudioContext)();
+  master = AC.createDynamicsCompressor();
+  master.threshold.value=-14; master.ratio.value=6;
+  master.connect(AC.destination);
+  musicBus = AC.createGain(); musicBus.gain.value=0; musicBus.connect(master);
+  sfxBus  = AC.createGain(); sfxBus.gain.value=.9;  sfxBus.connect(master);
+  noiseBuf = AC.createBuffer(1, AC.sampleRate*2, AC.sampleRate);
+  const d = noiseBuf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+}
+const now = ()=> AC ? AC.currentTime : 0;
+
+function whoosh(vol=.3, dur=.55, f0=240, f1=3000){
+  if(!AC) return; const t0=now();
+  const src=AC.createBufferSource(); src.buffer=noiseBuf; src.loop=true;
+  const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=1.1;
+  bp.frequency.setValueAtTime(f0,t0); bp.frequency.exponentialRampToValueAtTime(f1,t0+dur*.8);
+  const g=AC.createGain();
+  g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(vol,t0+dur*.28);
+  g.gain.linearRampToValueAtTime(0,t0+dur);
+  src.connect(bp).connect(g).connect(sfxBus); src.start(t0); src.stop(t0+dur+.05);
+}
+function bassDrop(){
+  if(!AC) return; const t0=now();
+  const o=AC.createOscillator(); o.type='sine';
+  o.frequency.setValueAtTime(150,t0); o.frequency.exponentialRampToValueAtTime(32,t0+1.15);
+  const g=AC.createGain(); g.gain.setValueAtTime(.85,t0);
+  g.gain.exponentialRampToValueAtTime(.001,t0+1.5);
+  o.connect(g).connect(sfxBus); o.start(t0); o.stop(t0+1.6);
+}
+function ding(){
+  if(!AC) return; const t0=now();
+  [1318.5, 2637].forEach((f,i)=>{
+    const o=AC.createOscillator(); o.type='sine'; o.frequency.value=f;
+    const g=AC.createGain();
+    g.gain.setValueAtTime(i? .12 : .34, t0);
+    g.gain.exponentialRampToValueAtTime(.001, t0+.8);
+    o.connect(g).connect(sfxBus); o.start(t0); o.stop(t0+.85);
+  });
+}
+function clickSfx(){
+  if(!AC) return; const t0=now();
+  const o=AC.createOscillator(); o.type='square'; o.frequency.value=1750;
+  const g=AC.createGain(); g.gain.setValueAtTime(.25,t0);
+  g.gain.exponentialRampToValueAtTime(.001,t0+.05);
+  o.connect(g).connect(sfxBus); o.start(t0); o.stop(t0+.06);
+  const src=AC.createBufferSource(); src.buffer=noiseBuf;
+  const hp=AC.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=4000;
+  const ng=AC.createGain(); ng.gain.setValueAtTime(.18,t0);
+  ng.gain.exponentialRampToValueAtTime(.001,t0+.04);
+  src.connect(hp).connect(ng).connect(sfxBus); src.start(t0); src.stop(t0+.05);
+}
+/* music building blocks */
+function kick(v=.9){ if(!AC)return; const t0=now();
+  const o=AC.createOscillator(); o.type='sine';
+  o.frequency.setValueAtTime(155,t0); o.frequency.exponentialRampToValueAtTime(44,t0+.12);
+  const g=AC.createGain(); g.gain.setValueAtTime(v,t0);
+  g.gain.exponentialRampToValueAtTime(.001,t0+.26);
+  o.connect(g).connect(musicBus); o.start(t0); o.stop(t0+.3); }
+function hat(v=.16){ if(!AC)return; const t0=now();
+  const src=AC.createBufferSource(); src.buffer=noiseBuf;
+  const hp=AC.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=7500;
+  const g=AC.createGain(); g.gain.setValueAtTime(v,t0);
+  g.gain.exponentialRampToValueAtTime(.001,t0+.05);
+  src.connect(hp).connect(g).connect(musicBus); src.start(t0); src.stop(t0+.06); }
+function snare(v=.3){ if(!AC)return; const t0=now();
+  const src=AC.createBufferSource(); src.buffer=noiseBuf;
+  const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1900; bp.Q.value=.8;
+  const g=AC.createGain(); g.gain.setValueAtTime(v,t0);
+  g.gain.exponentialRampToValueAtTime(.001,t0+.13);
+  src.connect(bp).connect(g).connect(musicBus); src.start(t0); src.stop(t0+.15); }
+function bassN(f,v=.3){ if(!AC)return; const t0=now();
+  const o=AC.createOscillator(); o.type='sawtooth'; o.frequency.value=f;
+  const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=420; lp.Q.value=4;
+  const g=AC.createGain(); g.gain.setValueAtTime(v,t0);
+  g.gain.exponentialRampToValueAtTime(.001,t0+.22);
+  o.connect(lp).connect(g).connect(musicBus); o.start(t0); o.stop(t0+.25); }
+function pad(freqs){ if(!AC)return; const t0=now();
+  freqs.forEach(f=>{
+    const o=AC.createOscillator(); o.type='triangle'; o.frequency.value=f;
+    const g=AC.createGain();
+    g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(.05,t0+.4);
+    g.gain.setValueAtTime(.05,t0+1.3); g.gain.linearRampToValueAtTime(0,t0+1.85);
+    o.connect(g).connect(musicBus); o.start(t0); o.stop(t0+1.9);
+  }); }
+
+/* 128 BPM — Am F C G loop, starts at t=10s */
+const BPM=128, STEP=60/BPM/2, MSTART=10;
+const ROOTS=[[55,82.41],[43.65,65.41],[65.41,98],[49,73.42]];
+const PADS=[[220,261.63,329.63],[174.61,220,261.63],[261.63,329.63,392],[196,246.94,293.66]];
+function playStep(gs){
+  const pos=gs%8, bar=Math.floor(gs/8), chord=bar%4, st=MSTART+gs*STEP;
+  if(st<10||st>64) return;
+  const sc = sceneAt(st);
+  const soft = (sc===3);                     // process scene: cleaner
+  if(pos%2===0){
+    if(!soft || pos%4===0) kick(soft? .55 : .9);
+    bassN(ROOTS[chord][0] * (pos===6? 2:1), soft? .2 : .3);
+  }else{
+    hat(soft? .07 : (sc===2? .2 : .15));
+    if(sc===2 && pos===7) bassN(ROOTS[chord][1],.24);
+  }
+  if(!soft && (pos===2||pos===6)) snare(sc===2? .34 : .22);
+  if(pos===0) pad(PADS[chord]);
+}
+
+/* one-shot sfx events crossed by the playhead */
+const EVENTS=[];
+EVENTS.push({t:.12,  fn:()=>bassDrop()});
+EVENTS.push({t:.3,   fn:()=>whoosh(.4,.8,180,3400)});
+for(let i=1;i<10;i++) EVENTS.push({t:i+.02, fn:()=>whoosh(.12,.3,700,3600)});
+[10,25,40,55].forEach(st=>EVENTS.push({t:st+.02, fn:()=>whoosh(.3,.6)}));
+EVENTS.push({t:56.0, fn:()=>ding()});
+EVENTS.push({t:58.2, fn:()=>ding()});
+EVENTS.push({t:60.4, fn:()=>ding()});
+EVENTS.push({t:65.2, fn:()=>whoosh(.22,.9,150,1200)});
+EVENTS.push({t:72.0, fn:()=>{clickSfx(); pressBtn();}});
+
+function pressBtn(){
+  const b=document.getElementById('cta');
+  b.classList.remove('pressed'); void b.offsetWidth; b.classList.add('pressed');
+  const r=document.getElementById('ctaRing');
+  r.classList.remove('go'); void r.offsetWidth; r.classList.add('go');
+}
+
+/* ================= PLAYBACK ================= */
+const els = {};
+SCENES.forEach(s=> els[s.id]=document.getElementById(s.id));
+
+function enterScene(i){
+  if(i===curScene) return;
+  curScene=i;
+  SCENES.forEach((s,k)=>{
+    const el=els[s.id];
+    const on = k===i;
+    if(on){ el.classList.remove('on'); void el.offsetWidth; el.classList.add('on'); }
+    else el.classList.remove('on');
+  });
+  document.querySelectorAll('#chips button').forEach((b,k)=>b.classList.toggle('live',k===i));
+}
+
+function sync(){
+  // scene switch
+  const idx = t>=DUR ? 5 : Math.max(0, sceneAt(Math.min(t,DUR-.001)));
+  if(idx!==curScene) enterScene(idx);
+
+  // sfx events crossed since last frame
+  if(AC && soundOn){
+    EVENTS.forEach(ev=>{ if(ev.t>prevT && ev.t<=t) ev.fn(); });
+  }
+  // music step scheduler
+  if(AC && soundOn && playing && t>=MSTART && t<64){
+    const gs=Math.floor((t-MSTART)/STEP);
+    if(gs-lastStep>3) lastStep=gs-1;
+    for(let s=lastStep+1;s<=gs;s++) playStep(s);
+    lastStep=gs;
+  }else lastStep=Math.floor((t-MSTART)/STEP);
+  // music level automation
+  if(AC){
+    let g=0;
+    if(t>=10&&t<25)g=.5; else if(t>=25&&t<40)g=.58; else if(t>=40&&t<55)g=.34;
+    else if(t>=55&&t<63.5)g=.42; else if(t>=63.5&&t<65)g=.42*(65-t)/1.5;
+    musicBus.gain.setTargetAtTime(soundOn? g:0, now(), .08);
+  }
+  prevT=t;
+
+  // hud
+  document.getElementById('fill').style.width=(t/DUR*100)+'%';
+  const m=Math.floor(t/60), s=Math.floor(t%60);
+  document.getElementById('time').textContent=`${m}:${String(s).padStart(2,'0')} / 1:15`;
+  document.getElementById('ov-end').style.display = t>=DUR ? 'flex':'none';
+}
+
+function loop(ts){
+  if(playing){
+    if(!lastRAF) lastRAF=ts;
+    t += Math.min((ts-lastRAF)/1000, .1);
+    if(t>=DUR){ t=DUR; playing=false; setPlayBtn(); }
+  }
+  lastRAF=ts;
+  sync();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+function setPlayBtn(){
+  document.getElementById('btn-play').textContent = playing? '⏸ PAUSE':'▶ PLAY';
+}
+function play(){ if(t>=DUR) restart(); playing=true; if(AC&&AC.state==='suspended')AC.resume(); setPlayBtn(); }
+function pause(){ playing=false; setPlayBtn(); }
+function seek(x){ t=Math.max(0,Math.min(x,DUR)); prevT=t; curScene=-1; lastStep=Math.floor((t-MSTART)/STEP); sync(); }
+function restart(){ document.getElementById('ov-end').style.display='none'; seek(0); play(); }
+
+document.getElementById('btn-play').onclick = ()=> playing? pause():play();
+document.getElementById('btn-restart').onclick = restart;
+document.getElementById('btn-sound').onclick = e=>{
+  soundOn=!soundOn;
+  e.currentTarget.textContent = soundOn? '🔊 SOUND ON':'🔇 MUTED';
+  e.currentTarget.classList.toggle('hot',soundOn);
+  if(AC&&AC.state==='suspended'&&playing)AC.resume();
+};
+document.getElementById('track').onclick = e=>{
+  const r=e.currentTarget.getBoundingClientRect();
+  seek((e.clientX-r.left)/r.width*DUR);
+};
+document.getElementById('ov-start').onclick = ()=>{
+  initAudio(); if(AC.state==='suspended')AC.resume();
+  document.getElementById('ov-start').style.display='none';
+  play();
+};
+document.getElementById('btn-replay').onclick = e=>{ e.stopPropagation(); restart(); };
+document.getElementById('ov-end').onclick = restart;
+document.getElementById('cta').onclick = e=>{ e.stopPropagation(); clickSfx(); pressBtn(); };
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'){ e.preventDefault(); if(document.getElementById('ov-start').style.display!=='none')
+    document.getElementById('ov-start').click(); else playing? pause():play(); }
+});
+setPlayBtn();
+</script>
+</body>
+</html>
