@@ -23,6 +23,7 @@ const MIME = {
 };
 
 const server = http.createServer((req, res) => {
+  console.log(`${new Date().toISOString()} ${req.method} ${req.url} host=${req.headers.host || '-'}`);
   try {
     const urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
     let filePath = path.join(ROOT, path.normalize(urlPath));
